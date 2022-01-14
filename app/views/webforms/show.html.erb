@@ -9,19 +9,25 @@
 <% values=@issue.editable_custom_field_values.group_by{|x| x.custom_field_id} %>
 <%= labelled_form_for @issue, :url => { :action => "new_issue" } do |f| %>
   <%= error_messages_for 'webform' %>
+  <%= error_messages_for 'issue' %>
 
   <% @webform.questions.sorted.each do |q| %>
-    <% if q.custom_field.present? || [-1,-2,-3].include?(q.custom_field_id) %>
-      <div class="box tabular">
-        <p><%= q.description %></p>
-        <% if q.custom_field_id == -1 %>
+    <% if q.custom_field.present? || [-1,-2,-3,-4].include?(q.custom_field_id) %>
+      <% if q.custom_field_id == -1 && @issue.safe_attribute?('assigned_to_id') %>
+        <div class="box tabular">
+          <p><%= q.description %></p>
           <p><%= f.select :assigned_to_id, principals_options_for_select(@issue.assignable_users, @issue.assigned_to),
                           :include_blank => true, :label => "", :required => @issue.required_attribute?('assigned_to_id') %></p>
-        <% elsif q.custom_field_id == -2 %>
+        </div>
+      <% elsif q.custom_field_id == -2 && @issue.safe_attribute?('category_id') %>
+        <div class="box tabular">
+          <p><%= q.description %></p>
           <p><%= f.select :category_id, (@issue.project.issue_categories.collect {|c| [c.name, c.id]}),
                           {:include_blank => true, :label => "", :required => @issue.required_attribute?('category_id')} %></p>
-
-        <% elsif q.custom_field_id == -3 %>
+        </div>
+      <% elsif q.custom_field_id == -3 && @issue.safe_attribute?('description') %>
+        <div class="box tabular">
+          <p><%= q.description %></p>
           <p><%= f.text_area :description, :cols => 60, :accesskey => accesskey(:edit), :class => 'wiki-edit',
                              :rows => [[10, @issue.description.to_s.length / 50].max, 20].min,
                              :data => {
@@ -29,12 +35,21 @@
                                :issues_url => auto_complete_issues_path(:project_id => @issue.project, :q => '')
                              },
                              :no_label => true %></p>
-          <%= wikitoolbar_for 'issue_description', preview_issue_path(:project_id => @issue.project, :issue_id => @issue.id) %>
-        <% else %>
+        </div>
+        <%= wikitoolbar_for 'issue_description', preview_issue_path(:project_id => @issue.project, :issue_id => @issue.id) %>
+      <% elsif q.custom_field_id == -4 %>
+        <div class="box tabular">
+          <p><%= q.description %></p>
+          <p><%= f.text_field :subject, :size => 80, :maxlength => 255, :label => "", :required => true %></p>
+        </div>
+      <% elsif @issue.safe_attribute? 'custom_field_values' %>
+        <div class="box tabular">
+          <p><%= q.description %></p>
           <p><%= custom_field_tag :issue, values[q.custom_field_id][0] if q.custom_field.present? %></p>
           <%= wikitoolbar_for "issue_custom_field_values_#{q.custom_field_id}" if q.custom_field.present? && q.custom_field.full_text_formatting? %>
-        <% end %>
-      </div>
+        </div>
+      <% else %>
+      <% end %>
     <% end %>
   <% end %>
   <%= submit_tag l(:button_save) %>
