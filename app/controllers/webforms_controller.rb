@@ -1,6 +1,6 @@
 class WebformsController < ApplicationController
   before_action :require_login
-  before_action :require_admin, :except => :show
+  before_action :require_admin, :except => [:show, :new_issue]
 
   def show
     @webform = find_webform
@@ -14,28 +14,29 @@ class WebformsController < ApplicationController
 
   def new_issue
     @webform = find_webform
+    @user = User.current
     if @webform.validate_webform
       # Add user to group if not already
       if @webform.group.present?
-        User.current.group_ids+=[@webform.group_id] unless @webform.group.users.include?(User.current)
+        @user.group_ids+=[@webform.group_id] unless @webform.group.users.include?(@user)
       end
 
       # Add user to role in project if not already
       if @webform.role.present?
-        unless User.current.roles_for_project(@webform.project).include?(@webform.role)
-          if User.current.membership(@webform.project).nil?
-            Member.create(user: User.current, project: @webform.project, roles: [@webform.role])
+        unless @user.roles_for_project(@webform.project).include?(@webform.role)
+          if @user.membership(@webform.project).nil?
+            Member.create(user: @user, project: @webform.project, roles: [@webform.role])
           else
-            User.current.membership(@webform.project).roles+=[@webform.role]
+            @user.membership(@webform.project).roles+=[@webform.role]
           end
         end
       end
 
-      unless User.current.allowed_to?(:add_issues, @webform.project, :global => true)
+      build_new_issue_from_params
+
+      unless @issue.allowed_target_projects(@user, @webform.project).present?
         raise ::Unauthorized
       end
-
-      build_new_issue_from_params
 
       if @issue.save
         call_hook(:controller_issues_new_after_save, { :params => params, :issue => @issue})
@@ -56,8 +57,8 @@ class WebformsController < ApplicationController
     @issue.project = @webform.project
     @issue.tracker = @webform.tracker
     @issue.status = @webform.issue_status
-    @issue.author ||= User.current
-    @issue.start_date ||= User.current.today if Setting.default_issue_start_date_to_creation_date?
+    @issue.author ||= @user
+    @issue.start_date ||= @user.today if Setting.default_issue_start_date_to_creation_date?
 
     param_attrs = (params[:issue] || {}).deep_dup
     attrs = param_attrs.slice("custom_field_values")
