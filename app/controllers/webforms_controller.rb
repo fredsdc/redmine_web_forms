@@ -2,6 +2,10 @@ class WebformsController < ApplicationController
   before_action :require_login
   before_action :require_admin, :except => [:show, :new_issue]
 
+  def index
+    @webforms = Webform.all
+  end
+
   def show
     @webform = find_webform
     if @webform.validate_webform
@@ -48,6 +52,11 @@ class WebformsController < ApplicationController
         render :action => 'show'
       end
     end
+  end
+
+  def destroy
+    Webform.find(params[:id]).destroy
+    redirect_to webforms_path
   end
 
   private

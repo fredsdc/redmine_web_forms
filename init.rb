@@ -5,4 +5,7 @@ Redmine::Plugin.register :redmine_web_forms do
   version '0.0.1'
   url 'https://github.com/fredsdc/redmine_web_forms'
   author_url 'https://github.com/fredsdc'
+
+  menu :admin_menu, :webforms, { controller: 'webforms', action: 'index'},
+  caption: :label_webform_plural, html: { class: 'icon icon-document'}
 end
