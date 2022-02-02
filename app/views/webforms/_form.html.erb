@@ -1,0 +1,22 @@
+<%= error_messages_for 'webform' %>
+
+<div class="box tabular">
+  <fieldset id="webform_options">
+    <%= render :partial => 'options' %>
+  </fieldset>
+  <p><%= f.text_field :title, :required => true %></p>
+  <p><%= f.text_area :description, :rows => 8, :class => 'wiki-edit' %></p>
+  <%= wikitoolbar_for 'webform_description' %>
+
+  <%= call_hook(:view_webform_form, :webform => @webform) %>
+</div>
+
+<%= javascript_tag do %>
+  function updateSelects() {
+    return $.ajax({
+      url: '<%= escape_javascript url_for(:action => 'update_selects', :format => 'js') %>',
+      type: 'post',
+      data: $('#webform_options').serialize()
+    });
+  }
+<% end %>

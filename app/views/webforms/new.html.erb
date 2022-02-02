@@ -1,0 +1,6 @@
+<%= title [l(:label_webform_plural), webforms_path], l(:label_webform_new) %>
+
+<%= labelled_form_for @webform do |f| %>
+  <%= render :partial => 'form', :locals => {:f => f} %>
+  <%= submit_tag l(:button_create) %>
+<% end %>

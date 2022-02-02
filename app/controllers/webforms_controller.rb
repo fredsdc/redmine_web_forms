@@ -6,6 +6,11 @@ class WebformsController < ApplicationController
     @webforms = Webform.all
   end
 
+  def new
+    @webform = Webform.new
+    default_parameters
+  end
+
   def show
     @webform = find_webform
     if @webform.validate_webform
@@ -14,6 +19,11 @@ class WebformsController < ApplicationController
       render_error :message => l(:error_webform_in_maintenance), :status => 403
       return false
     end
+  end
+
+  def destroy
+    Webform.find(params[:id]).destroy
+    redirect_to webforms_path
   end
 
   def new_issue
@@ -54,12 +64,41 @@ class WebformsController < ApplicationController
     end
   end
 
-  def destroy
-    Webform.find(params[:id]).destroy
-    redirect_to webforms_path
+  def update_selects
+    default_parameters
+    update_webform_from_params
+
+    if @webform.project.present? && @webform.project.active?
+      @trackers =  @webform.project.trackers.order(:name).map{|t| [t.name, t.id]}
+      if @trackers.pluck(1).include?(@webform.tracker_id)
+        @statuses = IssueStatus.find(
+          WorkflowTransition.where(
+            old_status_id: 0,
+            tracker_id: @webform.tracker_id,
+            workspace_id: @webform.project.workspace_id
+          ).pluck(:new_status_id) |
+          [ @webform.tracker.default_status_id ]
+        ).map{|t| [t.name, t.id]}
+      end
+    end
+
+    respond_to do |format|
+      format.js
+    end
   end
 
   private
+
+  def default_parameters
+    @projects = Project.all.active
+    @trackers = Tracker.order(:name).map{|t| [t.name, t.id]}
+    @statuses = IssueStatus.find(
+      WorkflowTransition.where(old_status_id: 0).pluck(:new_status_id) |
+      Tracker.all.map{|t| t.default_status_id}
+    ).map{|t| [t.name, t.id]}
+    @roles = Role.select{|r| r.has_permission?(:add_issues)}.pluck(:name, :id)
+    @groups = Group.all.pluck(:lastname, :id)
+  end
 
   def build_new_issue_from_params
     @issue = Issue.new
@@ -86,6 +125,12 @@ class WebformsController < ApplicationController
       @issue.fixed_version_id = cf.value                               if cf.custom_field_id == -5
       @issue.custom_field_values = {"#{cf.custom_field_id}": cf.value} if cf.custom_field.present?
     end
+  end
+
+  def update_webform_from_params
+    @webform = Webform.new
+    param_attrs = (params[:webform] || {}).deep_dup
+    @webform.safe_attributes = param_attrs
   end
 
   def find_webform
