@@ -11,6 +11,18 @@ class WebformsController < ApplicationController
     default_parameters
   end
 
+  def edit
+    @webform = find_webform
+    default_parameters
+    get_variables_from_webform
+  end
+
+  def create
+  end
+
+  def update
+  end
+
   def show
     @webform = find_webform
     if @webform.validate_webform
@@ -22,7 +34,7 @@ class WebformsController < ApplicationController
   end
 
   def destroy
-    Webform.find(params[:id]).destroy
+    find_webform.destroy
     redirect_to webforms_path
   end
 
@@ -67,9 +79,19 @@ class WebformsController < ApplicationController
   def update_selects
     default_parameters
     update_webform_from_params
+    get_variables_from_webform
 
+    respond_to do |format|
+      format.js
+    end
+  end
+
+  private
+
+  def get_variables_from_webform
     if @webform.project.present? && @webform.project.active?
       @trackers =  @webform.project.trackers.order(:name).map{|t| [t.name, t.id]}
+      @custom_fields = issue_core_fields
       if @trackers.pluck(1).include?(@webform.tracker_id)
         @statuses = IssueStatus.find(
           WorkflowTransition.where(
@@ -79,15 +101,24 @@ class WebformsController < ApplicationController
           ).pluck(:new_status_id) |
           [ @webform.tracker.default_status_id ]
         ).map{|t| [t.name, t.id]}
+        @custom_fields += Issue.new(project_id: @webform.project_id, tracker_id: @webform.tracker_id).editable_custom_fields.pluck(:name, :id)
+      else
+        @custom_fields += @webform.project.trackers.map{|t| Issue.new(project_id: @webform.project_id, tracker_id: t.id).editable_custom_fields}.flatten.uniq.sort.pluck(:name, :id)
       end
-    end
-
-    respond_to do |format|
-      format.js
+    else
+      @custom_fields += issue_core_fields + CustomField.order(:name).pluck(:name, :id)
     end
   end
 
-  private
+  def issue_core_fields
+    [
+      [ l(:field_assigned_to), -1],
+      [ l(:field_category), -2],
+      [ l(:field_description), -3],
+      [ l(:field_subject), -4],
+      [ l(:field_fixed_version), -5]
+    ]
+  end
 
   def default_parameters
     @projects = Project.all.active
@@ -98,6 +129,7 @@ class WebformsController < ApplicationController
     ).map{|t| [t.name, t.id]}
     @roles = Role.select{|r| r.has_permission?(:add_issues)}.pluck(:name, :id)
     @groups = Group.all.pluck(:lastname, :id)
+    @custom_fields = issue_core_fields + CustomField.order(:name).pluck(:name, :id)
   end
 
   def build_new_issue_from_params
@@ -114,7 +146,7 @@ class WebformsController < ApplicationController
     attrs["category_id"]=param_attrs["category_id"] if @webform.questions.pluck(:custom_field_id).include?(-2)
     attrs["description"]=param_attrs["description"] if @webform.questions.pluck(:custom_field_id).include?(-3)
     attrs["subject"]=param_attrs["subject"] if @webform.questions.pluck(:custom_field_id).include?(-4)
-    attrs["fixed_version_id"]=param_attrs["fixed_version_id"] if @webform.questions.pluck(:custom_field_id).include?(-4)
+    attrs["fixed_version_id"]=param_attrs["fixed_version_id"] if @webform.questions.pluck(:custom_field_id).include?(-5)
     @issue.safe_attributes = attrs
 
     @webform.webform_custom_field_values.each do |cf|
@@ -131,6 +163,13 @@ class WebformsController < ApplicationController
     @webform = Webform.new
     param_attrs = (params[:webform] || {}).deep_dup
     @webform.safe_attributes = param_attrs
+    params[:webform_custom_field_values].values.each do |w|
+      @webform.webform_custom_field_values.new(
+        custom_field_id: w["custom_field_id"],
+        identifier: w["identifier"],
+        value: w["value"]
+      )
+    end
   end
 
   def find_webform

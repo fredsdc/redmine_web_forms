@@ -2,10 +2,7 @@ class Webform < ActiveRecord::Base
   include Redmine::SafeAttributes
 
   has_many :webform_custom_field_values, :dependent => :delete_all
-  has_many :custom_fields, :through => :webform_custom_field_values
-
-  has_many :questions, lambda {order(:position)}
-  has_many :custom_fields, :through => :questions
+  has_many :questions, lambda {order(:position)}, :dependent => :delete_all
 
   belongs_to :project
   belongs_to :tracker
@@ -23,7 +20,8 @@ class Webform < ActiveRecord::Base
     'group_id',
     'role_id',
     'issue_status_id',
-    'questions')
+    'questions',
+    'webform_custom_field_values')
 
   def validate_webform(user=User.current)
       roles = (

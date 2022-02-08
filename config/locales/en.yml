@@ -5,3 +5,5 @@ en:
   label_webform_new: New webform
   label_webform_plural: Webforms
   label_adds_user: Adds user
+  label_question: Question
+  label_question_new: New Question

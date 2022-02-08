@@ -1,0 +1,16 @@
+<fieldset>
+  <%= labelled_fields_for :questions, q do |f| %>
+    <legend><%= l(:label_question) %> <span class="number"><%= n %></span> <img class="delete icon-only icon-del" title="<%= l(:button_delete) %>" onclick="$(this).parent().parent().remove(); renumber_questions();"/></legend>
+    <p><%= f.text_area :description, :rows => 3, :class => 'wiki-edit' %></p>
+    <div class="splitcontent">
+      <div class="splitcontentleft">
+        <p><%= f.select :custom_field_id, options_for_select(@custom_fields, :selected => q.custom_field_id), {:include_blank => true} %></p>
+        <p><%= f.text_field :identifier %></p>
+      </div>
+      <div class="splitcontentright">
+        <p><%= f.check_box :hidden %></p>
+        <p><%= f.text_field :unhide_if %></p>
+      </div>
+    </div>
+  <% end %>
+</fieldset>

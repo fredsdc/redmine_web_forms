@@ -1,22 +1,77 @@
 <%= error_messages_for 'webform' %>
 
 <div class="box tabular">
-  <fieldset id="webform_options">
-    <%= render :partial => 'options' %>
-  </fieldset>
   <p><%= f.text_field :title, :required => true %></p>
   <p><%= f.text_area :description, :rows => 8, :class => 'wiki-edit' %></p>
   <%= wikitoolbar_for 'webform_description' %>
+  <fieldset id="webform_options">
+    <%= render :partial => 'options' %>
+  </fieldset>
 
   <%= call_hook(:view_webform_form, :webform => @webform) %>
 </div>
 
+<div class="box tabular sortable_questions">
+  <% n = 1 %>
+  <% @webform.questions.each do |q| %>
+    <%= render :partial => 'question', :locals => {:q => q, :n => n} %>
+    <% n+=1 %>
+  <% end %>
+  <%= link_to l(:label_question_new), "", :class => 'icon icon-add', :onclick => 'addQuestion(this); renumber_questions(); return false;' %>
+</div>
+
+<div class="box tabular webform_custom_field_values">
+  <div id="webform_custom_field_values">
+    <%= render :partial => 'webform_custom_field_values' %>
+  </div>
+  <%= link_to l(:label_custom_field_new), "", :class => 'icon icon-add', :onclick => 'addCustomField(this); return false;' %>
+</div>
+
 <%= javascript_tag do %>
-  function updateSelects() {
+  function addQuestion(el) {
+    $("<%= escape_javascript render :partial => 'question', :locals => {:q => Question.new, :n => n} %>").insertBefore(el)
+  };
+
+  function addCustomField(el) {
+    $("<%= escape_javascript render :partial => 'webform_custom_field_value', :locals => {:wcfv => WebformCustomFieldValue.new} %>").insertBefore(el)
+  };
+
+  function updateFields() {
     return $.ajax({
       url: '<%= escape_javascript url_for(:action => 'update_selects', :format => 'js') %>',
       type: 'post',
-      data: $('#webform_options').serialize()
+      data: $('#webform_options').serialize() + '&' + $('#webform_custom_field_values fieldset').each(function(index){prefix = "webform_custom_field_values[" + index + "]";$(this).find('[name]').each(function(){this.name = this.name.replace(/webform_custom_field_values/, prefix);})}).find('[name]').serialize()
+    });
+  }
+
+  $('.sortable_questions').sortable({
+    items:'fieldset',
+    start: function(event, ui) {
+      ui.placeholder.height(ui.item.height())
+    },
+    stop: function(event, ui) {
+      renumber_questions()
+    }
+  });
+
+  function renumber_questions() {
+    $(".number").each(function(index) {
+      $(this).text(index + 1)
+    });
+  }
+
+  function number_questions() {
+    $(".sortable_questions fieldset").each(function(index) {
+      prefix = "questions[" + index + "]";
+      $(this).find('[name]').each(function(){
+        this.name = this.name.replace(/questions/, prefix);
+      })
+    });
+    $(".webform_custom_field_values fieldset").each(function(index) {
+      prefix = "webform_custom_field_values[" + index + "]";
+      $(this).find('[name]').each(function(){
+        this.name = this.name.replace(/webform_custom_field_values/, prefix);
+      })
     });
   }
 <% end %>
