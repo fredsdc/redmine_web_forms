@@ -4,7 +4,7 @@
     <p><%= f.text_area :description, :rows => 3, :class => 'wiki-edit' %></p>
     <div class="splitcontent">
       <div class="splitcontentleft">
-        <p><%= f.select :custom_field_id, options_for_select(@custom_fields, :selected => q.custom_field_id), {:include_blank => true} %></p>
+        <p><%= f.select :custom_field_id, options_for_select(@custom_fields, :selected => q.custom_field_id), {:include_blank => true, :label => :label_custom_field} %></p>
         <p><%= f.text_field :identifier %></p>
       </div>
       <div class="splitcontentright">

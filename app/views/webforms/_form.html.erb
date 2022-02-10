@@ -13,15 +13,17 @@
 
 <div class="box tabular sortable_questions">
   <% n = 1 %>
-  <% @webform.questions.each do |q| %>
-    <%= render :partial => 'question', :locals => {:q => q, :n => n} %>
-    <% n+=1 %>
-  <% end %>
+  <div id="questions">
+    <% @webform.questions.each do |q| %>
+      <%= render :partial => 'question', :locals => {:q => q, :n => n} %>
+      <% n+=1 %>
+    <% end %>
+  </div>
   <%= link_to l(:label_question_new), "", :class => 'icon icon-add', :onclick => 'addQuestion(this); renumber_questions(); return false;' %>
 </div>
 
 <div class="box tabular webform_custom_field_values">
-  <div id="webform_custom_field_values">
+  <div id="custom_fields">
     <%= render :partial => 'webform_custom_field_values' %>
   </div>
   <%= link_to l(:label_custom_field_new), "", :class => 'icon icon-add', :onclick => 'addCustomField(this); return false;' %>
@@ -29,18 +31,30 @@
 
 <%= javascript_tag do %>
   function addQuestion(el) {
-    $("<%= escape_javascript render :partial => 'question', :locals => {:q => Question.new, :n => n} %>").insertBefore(el)
+    $("<%= escape_javascript render :partial => 'question', :locals => {:q => Question.new, :n => n} %>").appendTo('#questions')
   };
 
   function addCustomField(el) {
-    $("<%= escape_javascript render :partial => 'webform_custom_field_value', :locals => {:wcfv => WebformCustomFieldValue.new} %>").insertBefore(el)
+    $("<%= escape_javascript render :partial => 'webform_custom_field_value', :locals => {:wcfv => WebformCustomFieldValue.new} %>").appendTo('#custom_fields')
   };
 
   function updateFields() {
     return $.ajax({
       url: '<%= escape_javascript url_for(:action => 'update_selects', :format => 'js') %>',
       type: 'post',
-      data: $('#webform_options').serialize() + '&' + $('#webform_custom_field_values fieldset').each(function(index){prefix = "webform_custom_field_values[" + index + "]";$(this).find('[name]').each(function(){this.name = this.name.replace(/webform_custom_field_values/, prefix);})}).find('[name]').serialize()
+      data: $('#webform_options').serialize() + '&' + $('#custom_fields fieldset').each(function(index){prefix = "webform_custom_field_values[" + index + "]";$(this).find('[name]').each(function(){this.name = this.name.replace(/webform_custom_field_values/, prefix);})}).find('[name]').serialize()
+    });
+  }
+
+  function updateWebformCustomField(el) {
+    el=$(el).closest('fieldset');
+    $(el).find('[name]').each(function(){
+      this.name = this.name.replace(/\[/, '[0][');
+    });
+    return $.ajax({
+      url: '<%= escape_javascript url_for(:action => 'update_custom_field', :format => 'js') %>',
+      type: 'post',
+      data: $('#webform_options').serialize() + '&' + $(el).serialize() + '&n=' + $('#custom_fields fieldset').index($(el))
     });
   }
 
@@ -61,7 +75,7 @@
   }
 
   function number_questions() {
-    $(".sortable_questions fieldset").each(function(index) {
+    $("#questions fieldset").each(function(index) {
       prefix = "questions[" + index + "]";
       $(this).find('[name]').each(function(){
         this.name = this.name.replace(/questions/, prefix);

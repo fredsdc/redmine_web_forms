@@ -18,9 +18,30 @@ class WebformsController < ApplicationController
   end
 
   def create
+    @webform = Webform.new
+    update_webform_from_params
   end
 
   def update
+    Webform.transaction do
+      @webform = find_webform
+      update_webform_from_params
+      if @webform.save
+        flash[:notice] = l(:notice_successful_update)
+        respond_to do |format|
+          format.html { redirect_back_or_default webforms_path }
+        end
+      else
+        default_parameters
+        get_variables_from_webform
+
+        respond_to do |format|
+          format.html { render :action => 'edit' }
+        end
+
+        raise ActiveRecord::Rollback
+      end
+    end
   end
 
   def show
@@ -78,6 +99,7 @@ class WebformsController < ApplicationController
 
   def update_selects
     default_parameters
+    @webform = Webform.new
     update_webform_from_params
     get_variables_from_webform
 
@@ -86,7 +108,24 @@ class WebformsController < ApplicationController
     end
   end
 
+  def update_custom_field
+    @webform = Webform.new
+    update_webform_from_params
+    get_variables_from_webform
+
+    @wcfv = @webform.webform_custom_field_values.first
+    @n = params[:n]
+
+    respond_to do |format|
+      format.js
+    end
+  end
+
   private
+
+  def find_webform
+    Webform.find(params[:id])
+  end
 
   def get_variables_from_webform
     if @webform.project.present? && @webform.project.active?
@@ -160,19 +199,19 @@ class WebformsController < ApplicationController
   end
 
   def update_webform_from_params
-    @webform = Webform.new
     param_attrs = (params[:webform] || {}).deep_dup
     @webform.safe_attributes = param_attrs
-    params[:webform_custom_field_values].values.each do |w|
-      @webform.webform_custom_field_values.new(
-        custom_field_id: w["custom_field_id"],
-        identifier: w["identifier"],
-        value: w["value"]
-      )
-    end
-  end
 
-  def find_webform
-    Webform.find(params[:id])
+    param_attrs = (params[:questions] || {}).deep_dup
+    @webform.questions=[]
+    param_attrs.values.each do |q|
+      @webform.questions.new.safe_attributes = q
+    end
+
+    param_attrs = (params[:webform_custom_field_values] || {}).deep_dup
+    @webform.webform_custom_field_values=[]
+    param_attrs.values.each do |p|
+      @webform.webform_custom_field_values.new.safe_attributes = p
+    end
   end
 end

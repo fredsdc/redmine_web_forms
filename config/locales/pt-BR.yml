@@ -1,7 +1,10 @@
 pt-BR:
   error_webform_in_maintenance: Este formulário está em manutenção
+  error_invalid_custom_field: Campo personalizado inválido
   label_webform_new: Novo formulário
   label_webform_plural: Formulários
   label_adds_user: Inclui usuário
   label_question: Questão
   label_question_new: Nova questão
+  field_hidden: Esconder
+  field_unhide_if: Mostrar se

@@ -1,26 +1,33 @@
 <fieldset>
   <%= labelled_fields_for :webform_custom_field_values, wcfv do |f| %>
-    <legend><%= l(:label_custom_field) %> <img class="delete icon-only icon-del" title="<%= l(:button_delete) %>" onclick="$(this).parent().parent().remove();"/></legend>
-    <p><%= f.select :custom_field_id, options_for_select(@custom_fields, :selected => wcfv.custom_field_id), {:include_blank => true} %></p>
+    <legend><%= l(:label_custom_field) %> <img class="delete icon-only icon-del" title="<%= l(:button_delete) %>" onclick="$(this).closest('fieldset').remove();"/></legend>
+    <div class="splitcontent">
+      <div class="splitcontentleft">
+        <p><%= f.select :custom_field_id, options_for_select(@custom_fields, :selected => wcfv.custom_field_id), {:include_blank => true, :label => :label_custom_field}, :onchange => 'updateWebformCustomField(this);' %></p>
+      </div>
+      <div class="splitcontentright">
+        <p><%= f.text_field :identifier %></p>
+      </div>
+    </div>
     <% if wcfv.custom_field.present? || [-1,-2,-3,-4,-5].include?(wcfv.custom_field_id) %>
       <% if wcfv.custom_field_id == -1 && @webform.project.present? && @webform.tracker.present? && issue = Issue.new(project: @webform.project, tracker: @webform.tracker) %>
-        <p><%= f.select :value, issue.assignable_users.collect{|c| [c.name, c.id]},
+        <p><%= f.select :default_value, issue.assignable_users.collect{|c| [c.name, c.id]},
                         {:include_blank => true} %></p>
       <% elsif wcfv.custom_field_id == -2 && @webform.project.present? %>
-        <p><%= f.select :value, @webform.project.issue_categories.collect{|c| [c.name, c.id]},
+        <p><%= f.select :default_value, @webform.project.issue_categories.collect{|c| [c.name, c.id]},
                         {:include_blank => true} %></p>
       <% elsif wcfv.custom_field_id == -3 && @webform.tracker.present? && @webform.tracker.core_fields.include?('description') %>
-        <p><%= f.text_area :value, :cols => 60, :accesskey => accesskey(:edit), :id => 'issue_description', :class => 'wiki-edit',
-                           :rows => [[10, wcfv.value.to_s.length / 50].max, 20].min %></p>
+        <p><%= f.text_area :default_value, :cols => 60, :accesskey => accesskey(:edit), :id => 'issue_description', :class => 'wiki-edit',
+                           :rows => [[10, wcfv.default_value.to_s.length / 50].max, 20].min %></p>
         <%= wikitoolbar_for 'issue_description' %>
       <% elsif wcfv.custom_field_id == -4 %>
-        <p><%= f.text_field :value, :size => 80, :maxlength => 255, :label => "", :required => true %></p>
+        <p><%= f.text_field :default_value, :size => 80, :maxlength => 255, :label => :field_value, :required => true %></p>
       <% elsif wcfv.custom_field_id == -5 && @webform.project.present? %>
-        <p><%= f.select :value, (@webform.project.versions.collect{|c| [c.name, c.id]}),
+        <p><%= f.select :default_value, (@webform.project.versions.collect{|c| [c.name, c.id]}),
                         {:include_blank => true} %></p>
-      <% elsif wcfv.custom_field.present? && value = Issue.new(:project_id => @webform.project_id, :tracker_id => @webform.tracker_id).editable_custom_field_values.group_by{|x| x.custom_field_id}[wcfv.custom_field_id] %>
-        <p><%= f.label :value %><%= custom_field_tag(:custom_field, wcfv).
-          gsub(/ name="(.+?)"/, ' name="webform_custom_field_values[value]"').html_safe %></p>
+      <% elsif wcfv.custom_field.present? && default_value = Issue.new(:project_id => @webform.project_id, :tracker_id => @webform.tracker_id).editable_custom_field_values.group_by{|x| x.custom_field_id}[wcfv.custom_field_id] %>
+        <p><%= f.label :default_value %><%= custom_field_tag(:custom_field, wcfv).
+          gsub(/ name="(.+?)"/, ' name="webform_custom_field_values[default_value]"').html_safe %></p>
         <%= wikitoolbar_for "custom_field_custom_field_values_#{wcfv.custom_field_id}" if wcfv.custom_field.present? && wcfv.custom_field.full_text_formatting? %>
       <% end %>
     <% end %>

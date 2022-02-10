@@ -4,6 +4,7 @@
 resources :webforms do
   collection do
     post 'update_selects'
+    post 'update_custom_field'
   end
 
   member do
