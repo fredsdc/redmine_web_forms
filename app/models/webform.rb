@@ -1,8 +1,8 @@
 class Webform < ActiveRecord::Base
   include Redmine::SafeAttributes
 
-  has_many :webform_custom_field_values, :dependent => :delete_all
-  has_many :questions, lambda {order(:position)}, :dependent => :delete_all
+  has_many :webform_custom_field_values, -> {order(:position)}, :dependent => :delete_all
+  has_many :questions, -> {order(:position)}, :dependent => :delete_all
 
   belongs_to :project
   belongs_to :tracker
@@ -11,6 +11,7 @@ class Webform < ActiveRecord::Base
   belongs_to :issue_status
 
   validates_presence_of :title
+  validate :identifier_uniqueness
 
   safe_attributes(
     'title',
@@ -38,9 +39,9 @@ class Webform < ActiveRecord::Base
       WorkflowTransition.where(
         old_status_id: 0,
         tracker_id: self.tracker_id,
-        role_id: roles.pluck(:id),
+        role_id: roles.map{|r| r.id},
         workspace_id: self.project.workspace_id
-      ).pluck(:new_status_id).include?(self.issue_status_id)
+      ).map{|w| w.new_status_id}.include?(self.issue_status_id)
   end
 
   private
@@ -51,5 +52,17 @@ class Webform < ActiveRecord::Base
       role.permissions_all_trackers?(:add_issues) ||
       role.permissions_tracker_ids(:add_issues).include?(self.tracker_id)
     )
+  end
+
+  def identifier_uniqueness
+    rep_str = (
+      questions.map{|x| x.identifier} +
+      webform_custom_field_values.map{|x| x.identifier} -
+      ["", nil]
+    ).group_by{ |e| e }.select { |k, v| v.size > 1 }.keys.join(", ")
+
+    if rep_str.present?
+      errors.add(:webform, l(:error_repeated_identifiers, :identifiers => rep_str))
+    end
   end
 end

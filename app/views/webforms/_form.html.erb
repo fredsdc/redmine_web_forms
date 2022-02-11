@@ -14,7 +14,7 @@
 <div class="box tabular sortable_questions">
   <% n = 1 %>
   <div id="questions">
-    <% @webform.questions.sorted.each do |q| %>
+    <% @webform.questions.each do |q| %>
       <%= render :partial => 'question', :locals => {:q => q, :n => n} %>
       <% n += 1 %>
     <% end %>

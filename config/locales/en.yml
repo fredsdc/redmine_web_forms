@@ -3,6 +3,7 @@ en:
   # my_label: "My label"
   error_webform_in_maintenance: This form is offline for maintenance
   error_invalid_custom_field: Custom Field is invalid
+  error_repeated_identifiers: "has repeated identifiers: %{identifiers}"
   label_webform_new: New webform
   label_webform_plural: Webforms
   label_adds_user: Adds user

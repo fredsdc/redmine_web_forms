@@ -20,12 +20,27 @@ class WebformsController < ApplicationController
   def create
     @webform = Webform.new
     update_webform_from_params
+
+    if @webform.save
+      flash[:notice] = l(:notice_successful_create)
+      respond_to do |format|
+        format.html { redirect_back_or_default webforms_path }
+      end
+    else
+      default_parameters
+      get_variables_from_webform
+
+      respond_to do |format|
+        format.html { render :action => 'new' }
+      end
+    end
   end
 
   def update
     Webform.transaction do
       @webform = find_webform
       update_webform_from_params
+
       if @webform.save
         flash[:notice] = l(:notice_successful_update)
         respond_to do |format|
@@ -131,7 +146,7 @@ class WebformsController < ApplicationController
     if @webform.project.present? && @webform.project.active?
       @trackers =  @webform.project.trackers.order(:name).map{|t| [t.name, t.id]}
       @custom_fields = issue_core_fields
-      if @trackers.pluck(1).include?(@webform.tracker_id)
+      if @trackers.map{|k,v| v}.include?(@webform.tracker_id)
         @statuses = IssueStatus.find(
           WorkflowTransition.where(
             old_status_id: 0,
@@ -145,7 +160,7 @@ class WebformsController < ApplicationController
         @custom_fields += @webform.project.trackers.map{|t| Issue.new(project_id: @webform.project_id, tracker_id: t.id).editable_custom_fields}.flatten.uniq.sort.pluck(:name, :id)
       end
     else
-      @custom_fields += issue_core_fields + CustomField.order(:name).pluck(:name, :id)
+      @custom_fields = issue_core_fields + CustomField.order(:name).pluck(:name, :id)
     end
   end
 
@@ -181,11 +196,11 @@ class WebformsController < ApplicationController
 
     param_attrs = (params[:issue] || {}).deep_dup
     attrs = param_attrs.slice("custom_field_values")
-    attrs["assigned_to_id"]=param_attrs["assigned_to_id"] if @webform.questions.pluck(:custom_field_id).include?(-1)
-    attrs["category_id"]=param_attrs["category_id"] if @webform.questions.pluck(:custom_field_id).include?(-2)
-    attrs["description"]=param_attrs["description"] if @webform.questions.pluck(:custom_field_id).include?(-3)
-    attrs["subject"]=param_attrs["subject"] if @webform.questions.pluck(:custom_field_id).include?(-4)
-    attrs["fixed_version_id"]=param_attrs["fixed_version_id"] if @webform.questions.pluck(:custom_field_id).include?(-5)
+    attrs["assigned_to_id"]=param_attrs["assigned_to_id"]     if @webform.questions.map{|w| w.custom_field_id}.include?(-1)
+    attrs["category_id"]=param_attrs["category_id"]           if @webform.questions.map{|w| w.custom_field_id}.include?(-2)
+    attrs["description"]=param_attrs["description"]           if @webform.questions.map{|w| w.custom_field_id}.include?(-3)
+    attrs["subject"]=param_attrs["subject"]                   if @webform.questions.map{|w| w.custom_field_id}.include?(-4)
+    attrs["fixed_version_id"]=param_attrs["fixed_version_id"] if @webform.questions.map{|w| w.custom_field_id}.include?(-5)
     @issue.safe_attributes = attrs
 
     @webform.webform_custom_field_values.each do |cf|

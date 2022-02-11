@@ -1,6 +1,7 @@
 pt-BR:
   error_webform_in_maintenance: Este formulário está em manutenção
   error_invalid_custom_field: Campo personalizado inválido
+  error_repeated_identifiers: "tem identificadores repetidos: %{identifiers}"
   label_webform_new: Novo formulário
   label_webform_plural: Formulários
   label_adds_user: Inclui usuário

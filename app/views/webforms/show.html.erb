@@ -11,7 +11,7 @@
   <%= error_messages_for 'webform' %>
   <%= error_messages_for 'issue' %>
 
-  <% @webform.webform_custom_field_values.sorted.each do |w| %>
+  <% @webform.webform_custom_field_values.each do |w| %>
     <% if w.custom_field.present? || [-1,-2,-3,-4,-5].include?(w.custom_field_id) %>
       <% if w.custom_field_id == -1 && @issue.safe_attribute?('assigned_to_id') %>
         <%= f.hidden_field :assign_to_id, {:value => w.default_value, :id => w.identifier} %>
@@ -31,7 +31,7 @@
     <% end %>
   <% end %>
 
-  <% @webform.questions.sorted.each do |q| %>
+  <% @webform.questions.each do |q| %>
     <% if q.custom_field.present? || [-1,-2,-3,-4,-5].include?(q.custom_field_id) %>
       <% if q.custom_field_id == -1 && @issue.safe_attribute?('assigned_to_id') %>
         <div class="box tabular">
