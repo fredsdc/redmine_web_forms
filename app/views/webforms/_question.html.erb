@@ -1,6 +1,6 @@
 <fieldset>
   <%= labelled_fields_for :questions, q do |f| %>
-    <legend><%= l(:label_question) %> <span class="number"><%= n %></span> <img class="delete icon-only icon-del" title="<%= l(:button_delete) %>" onclick="$(this).parent().parent().remove(); renumber_questions();"/></legend>
+    <legend><%= l(:label_question) %> <span class="number"><%= n %></span> <img class="delete icon-only icon-del" title="<%= l(:button_delete) %>" onclick="$(this).parent().parent().remove(); renumber_list();"/></legend>
     <p><%= f.text_area :description, :rows => 3, :class => 'wiki-edit' %></p>
     <div class="splitcontent">
       <div class="splitcontentleft">

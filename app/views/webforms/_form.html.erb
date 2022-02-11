@@ -14,19 +14,19 @@
 <div class="box tabular sortable_questions">
   <% n = 1 %>
   <div id="questions">
-    <% @webform.questions.each do |q| %>
+    <% @webform.questions.sorted.each do |q| %>
       <%= render :partial => 'question', :locals => {:q => q, :n => n} %>
-      <% n+=1 %>
+      <% n += 1 %>
     <% end %>
   </div>
-  <%= link_to l(:label_question_new), "", :class => 'icon icon-add', :onclick => 'addQuestion(this); renumber_questions(); return false;' %>
+  <%= link_to l(:label_question_new), "", :class => 'icon icon-add', :onclick => 'addQuestion(this); renumber_list(".sortable_questions"); return false;' %>
 </div>
 
 <div class="box tabular webform_custom_field_values">
   <div id="custom_fields">
     <%= render :partial => 'webform_custom_field_values' %>
   </div>
-  <%= link_to l(:label_custom_field_new), "", :class => 'icon icon-add', :onclick => 'addCustomField(this); return false;' %>
+  <%= link_to l(:label_custom_field_new), "", :class => 'icon icon-add', :onclick => 'addCustomField(this); renumber_list(".webform_custom_field_values"); return false;' %>
 </div>
 
 <%= javascript_tag do %>
@@ -35,7 +35,7 @@
   };
 
   function addCustomField(el) {
-    $("<%= escape_javascript render :partial => 'webform_custom_field_value', :locals => {:wcfv => WebformCustomFieldValue.new} %>").appendTo('#custom_fields')
+    $("<%= escape_javascript render :partial => 'webform_custom_field_value', :locals => {:wcfv => WebformCustomFieldValue.new, :n => n} %>").appendTo('#custom_fields')
   };
 
   function updateFields() {
@@ -64,24 +64,34 @@
       ui.placeholder.height(ui.item.height())
     },
     stop: function(event, ui) {
-      renumber_questions()
+      renumber_list('.sortable_questions')
     }
   });
 
-  function renumber_questions() {
-    $(".number").each(function(index) {
+  $('.webform_custom_field_values').sortable({
+    items:'fieldset',
+    start: function(event, ui) {
+      ui.placeholder.height(ui.item.height())
+    },
+    stop: function(event, ui) {
+      renumber_list('.webform_custom_field_values')
+    }
+  });
+
+  function renumber_list(el) {
+    $(el + " .number").each(function(index) {
       $(this).text(index + 1)
     });
   }
 
-  function number_questions() {
+  function number_list() {
     $("#questions fieldset").each(function(index) {
       prefix = "questions[" + index + "]";
       $(this).find('[name]').each(function(){
         this.name = this.name.replace(/questions/, prefix);
       })
     });
-    $(".webform_custom_field_values fieldset").each(function(index) {
+    $("#custom_fields fieldset").each(function(index) {
       prefix = "webform_custom_field_values[" + index + "]";
       $(this).find('[name]').each(function(){
         this.name = this.name.replace(/webform_custom_field_values/, prefix);

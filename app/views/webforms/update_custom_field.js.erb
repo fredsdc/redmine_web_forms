@@ -1,1 +1,1 @@
-$($('#custom_fields fieldset')[<%= @n %>]).replaceWith('<%= escape_javascript(render :partial => 'webform_custom_field_value', :locals => {:wcfv => @wcfv}) %>');
+$($('#custom_fields fieldset')[<%= @n %>]).replaceWith('<%= escape_javascript(render :partial => 'webform_custom_field_value', :locals => {:wcfv => @wcfv, :n => @n}) %>');

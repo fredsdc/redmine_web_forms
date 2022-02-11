@@ -2,5 +2,5 @@
 
 <%= labelled_form_for @webform do |f| %>
   <%= render :partial => 'form', :locals => {:f => f} %>
-  <%= submit_tag l(:button_save), :onclick => "number_questions();" %>
+  <%= submit_tag l(:button_save), :onclick => "number_list();" %>
 <% end %>

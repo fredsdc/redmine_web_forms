@@ -1,3 +1,5 @@
-<% @webform.webform_custom_field_values.each do |wcfv| %>
-  <%= render :partial => 'webform_custom_field_value', :locals => {:wcfv => wcfv} %>
+<% n = 1 %>
+<% @webform.webform_custom_field_values.sorted.each do |wcfv| %>
+  <%= render :partial => 'webform_custom_field_value', :locals => {:wcfv => wcfv, :n => n} %>
+  <% n += 1 %>
 <% end %>
