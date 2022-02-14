@@ -11,6 +11,13 @@
   <%= call_hook(:view_webform_form, :webform => @webform) %>
 </div>
 
+<div class="box tabular webform_custom_field_values">
+  <div id="custom_fields">
+    <%= render :partial => 'webform_custom_field_values' %>
+  </div>
+  <%= link_to l(:label_custom_field_new), "", :class => 'icon icon-add', :onclick => 'addCustomField(this); renumber_list(".webform_custom_field_values"); return false;' %>
+</div>
+
 <div class="box tabular sortable_questions">
   <% n = 1 %>
   <div id="questions">
@@ -20,13 +27,6 @@
     <% end %>
   </div>
   <%= link_to l(:label_question_new), "", :class => 'icon icon-add', :onclick => 'addQuestion(this); renumber_list(".sortable_questions"); return false;' %>
-</div>
-
-<div class="box tabular webform_custom_field_values">
-  <div id="custom_fields">
-    <%= render :partial => 'webform_custom_field_values' %>
-  </div>
-  <%= link_to l(:label_custom_field_new), "", :class => 'icon icon-add', :onclick => 'addCustomField(this); renumber_list(".webform_custom_field_values"); return false;' %>
 </div>
 
 <%= javascript_tag do %>

@@ -7,7 +7,7 @@ class CreateQuestions < ActiveRecord::Migration[5.2]
       t.text :description
       t.integer :position, :default => nil, :null => true
       t.boolean :hidden, :default => 0
-      t.string :unhide_if
+      t.string :onchange
     end
   end
 end

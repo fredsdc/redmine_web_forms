@@ -8,4 +8,4 @@ pt-BR:
   label_question: Questão
   label_question_new: Nova questão
   field_hidden: Esconder
-  field_unhide_if: Mostrar se
+  field_onchange: onchange
