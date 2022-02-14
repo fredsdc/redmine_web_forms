@@ -67,7 +67,11 @@
         <% end %>
       <% elsif (q.custom_field_id.nil?) %>
         <p><%= q.description %></p>
-        <p><%= text_area_tag '', '', :id => q.identifier, :onchange => q.onchange, :cols => 60, :class => 'wiki-edit', :rows => 3 %></p>
+        <% if q.possible_values.present? %>
+          <p><%= select_tag '', options_for_select(q.possible_values), :id => q.identifier, :onchange => q.onchange, :include_blank => true %></p>
+        <% else %>
+          <p><%= text_area_tag '', '', :id => q.identifier, :onchange => q.onchange, :cols => 60, :class => 'wiki-edit', :rows => 3 %></p>
+        <% end %>
       <% end %>
     </div>
   <% end %>

@@ -6,7 +6,7 @@ class CreateQuestions < ActiveRecord::Migration[5.2]
       t.string :identifier
       t.text :description
       t.integer :position, :default => nil, :null => true
-      t.text :list
+      t.text :possible_values
       t.boolean :hidden, :default => 0
       t.text :onchange
     end

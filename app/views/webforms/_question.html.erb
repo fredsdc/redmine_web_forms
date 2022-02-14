@@ -5,11 +5,15 @@
     <div class="splitcontent">
       <div class="splitcontentleft">
         <p><%= f.select :custom_field_id, options_for_select(@custom_fields, :selected => q.custom_field_id), {:include_blank => true, :label => :label_custom_field} %></p>
-        <p><%= f.text_field :identifier %></p>
+        <p>
+          <%= f.text_area :possible_values, :cols => 60, :value => q.possible_values.to_a.join("\n"), :rows => 5 %>
+          <em class="info"><%= l(:text_custom_field_possible_values_info) + " (" + l(:label_optional) + ")" %></em>
+        </p>
       </div>
       <div class="splitcontentright">
+        <p><%= f.text_field :identifier %></p>
+        <p><%= f.text_area :onchange, :cols => 60, :rows => 4 %></p>
         <p><%= f.check_box :hidden %></p>
-        <p><%= f.text_field :onchange %></p>
       </div>
     </div>
   <% end %>
