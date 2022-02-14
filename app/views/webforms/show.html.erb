@@ -32,53 +32,44 @@
   <% end %>
 
   <% @webform.questions.each do |q| %>
-    <% if q.custom_field.present? || [-1,-2,-3,-4,-5].include?(q.custom_field_id) %>
-      <% if q.custom_field_id == -1 && @issue.safe_attribute?('assigned_to_id') %>
-        <div class="box tabular">
+    <div class="box tabular" <%= q.hidden? ? 'style="display: none;"'.html_safe : '' %>>
+      <% if q.custom_field.present? || [-1,-2,-3,-4,-5].include?(q.custom_field_id) %>
+        <% if q.custom_field_id == -1 && @issue.safe_attribute?('assigned_to_id') %>
           <p><%= q.description %></p>
           <p><%= f.select :assigned_to_id, principals_options_for_select(@issue.assignable_users, @issue.assigned_to),
-                          {:include_blank => true, :label => "", :required => @issue.required_attribute?('assigned_to_id')}, {:id => q.identifier} %></p>
-        </div>
-      <% elsif q.custom_field_id == -2 && @issue.safe_attribute?('category_id') %>
-        <div class="box tabular">
+                          {:include_blank => true, :label => "", :required => @issue.required_attribute?('assigned_to_id')},
+                          {:id => q.identifier, :onchange => q.onchange} %></p>
+        <% elsif q.custom_field_id == -2 && @issue.safe_attribute?('category_id') %>
           <p><%= q.description %></p>
           <p><%= f.select :category_id, (@issue.project.issue_categories.collect {|c| [c.name, c.id]}),
-                          {:include_blank => true, :label => "", :required => @issue.required_attribute?('category_id')}, {:id => q.identifier} %></p>
-        </div>
-      <% elsif q.custom_field_id == -3 && @issue.safe_attribute?('description') %>
-        <div class="box tabular">
+                          {:include_blank => true, :label => "", :required => @issue.required_attribute?('category_id')},
+                          {:id => q.identifier, :onchange => q.onchange} %></p>
+        <% elsif q.custom_field_id == -3 && @issue.safe_attribute?('description') %>
           <p><%= q.description %></p>
           <p><%= f.text_area :description, :cols => 60, :accesskey => accesskey(:edit), :class => 'wiki-edit',
                              :rows => [[10, @issue.description.to_s.length / 50].max, 20].min,
-                             :no_label => true, :id => q.identifier %></p>
-        </div>
-        <%= wikitoolbar_for 'issue_description', preview_issue_path(:project_id => @issue.project, :issue_id => @issue.id) %>
-      <% elsif q.custom_field_id == -4 %>
-        <div class="box tabular">
+                             :no_label => true, :id => q.identifier, :onchange => q.onchange %></p>
+          <%= wikitoolbar_for 'issue_description', preview_issue_path(:project_id => @issue.project, :issue_id => @issue.id) %>
+        <% elsif q.custom_field_id == -4 %>
           <p><%= q.description %></p>
-          <p><%= f.text_field :subject, :size => 80, :maxlength => 255, :label => "", :id => q.identifier, :required => true %></p>
-        </div>
-      <% elsif q.custom_field_id == -5 && @issue.safe_attribute?('fixed_version_id') %>
-        <div class="box tabular">
+          <p><%= f.text_field :subject, :size => 80, :maxlength => 255, :label => "", :id => q.identifier,
+                              :required => true, :onchange => q.onchange %></p>
+        <% elsif q.custom_field_id == -5 && @issue.safe_attribute?('fixed_version_id') %>
           <p><%= q.description %></p>
           <p><%= f.select :fixed_version_id, (@issue.project.versions.collect{|c| [c.name, c.id]}),
-                          {:include_blank => true}, {:id => q.identifier} %></p>
-        </div>
-      <% elsif @issue.safe_attribute? 'custom_field_values' %>
-        <div class="box tabular">
+                          {:no_label => true, :include_blank => true}, {:id => q.identifier, :onchange => q.onchange} %></p>
+        <% elsif @issue.safe_attribute? 'custom_field_values' %>
           <p><%= q.description %></p>
           <% id = q.identifier.present? ? q.identifier : custom_field_tag_id(:issue, q.custom_field) %>
           <p><%= custom_field_tag(:issue, values[q.custom_field_id][0]).
-            gsub(/ id="(.+?)"/, ' id="' + id + '"').html_safe if q.custom_field.present? %></p>
+            gsub(/ id="(.+?)"/, ' id="' + id + '" onchange="' + q.onchange + '"' ).html_safe if q.custom_field.present? %></p>
           <%= wikitoolbar_for id if q.custom_field.present? && q.custom_field.full_text_formatting? %>
-        </div>
-      <% end %>
-    <% elsif (q.custom_field_id.nil? && q.identifier.present?) %>
-      <div class="box tabular">
+        <% end %>
+      <% elsif (q.custom_field_id.nil?) %>
         <p><%= q.description %></p>
-        <p><%= text_area_tag '', '', :id => q.identifier, :cols => 60, :class => 'wiki-edit', :rows => 3 %></p>
-      </div>
-    <% end %>
+        <p><%= text_area_tag '', '', :id => q.identifier, :onchange => q.onchange, :cols => 60, :class => 'wiki-edit', :rows => 3 %></p>
+      <% end %>
+    </div>
   <% end %>
   <%= submit_tag l(:button_save) %>
 <% end %>

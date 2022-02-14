@@ -1,3 +1,8 @@
 = Redmine Web Forms
 
 This plugin manages Redmine Web Forms as an alternative to creating new issues.
+
+Examples of onchange:
+
+if ($(this).val() == 1){$('#test').closest('.box').show()} else {$('#test').closest('.box').hide()};
+if ($(this).val().toLowerCase().includes('test')){$('#test').closest('.box').show(); $('#test').focus()} else {$('#test').closest('.box').hide()};

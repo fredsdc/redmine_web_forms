@@ -3,11 +3,12 @@ class CreateQuestions < ActiveRecord::Migration[5.2]
     create_table :questions do |t|
       t.integer :webform_id, :null => false
       t.integer :custom_field_id
-      t.text :identifier
+      t.string :identifier
       t.text :description
       t.integer :position, :default => nil, :null => true
+      t.text :list
       t.boolean :hidden, :default => 0
-      t.string :onchange
+      t.text :onchange
     end
   end
 end
