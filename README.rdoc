@@ -2,7 +2,32 @@
 
 This plugin manages Redmine Web Forms as an alternative to creating new issues.
 
-Examples of onchange:
+It creates a new entry in the admin menu to manage webforms.
 
-if ($(this).val() == 1){$('#test').closest('.box').show()} else {$('#test').closest('.box').hide()};
-if ($(this).val().toLowerCase().includes('test')){$('#test').closest('.box').show(); $('#test').focus()} else {$('#test').closest('.box').hide()};
+# Forms
+
+1. Forms have a title, and a description what it is for.
+2. Forms will eventually create an issue of selected type, on selected project, with selected status.
+3. Optionally, a form may add the user taking it to a selected role on the project, or to a Redmine group
+4. Forms may have Custom Fields and Questions
+
+# Custom Fields
+
+1. Custom fields are fields automaticaly filled by the form
+2. Fields may relate to a custom field of the issue setting a custom value
+3. Fields may have an identifier to be used by javascript on questions
+
+# Questions
+
+1. Questions have a description (the actual question text)
+2. Questions may fill an issue custom field directly
+3. If not associated with a custom field, questions may have possible values (a list)
+4. Questions may have an identifier to be used by javascript
+5. Questions may have onchange javascript
+6. Questions may be initially hidden
+
+Examples of onchange javascript:
+
+if ($(this).val() == 1){$('#test').closest('.box').show(); $('#test').focus()} else {$('#test').val('').closest('.box').hide()};
+
+if ($(this).val().toLowerCase().includes('test')){$('#test').closest('.box').show(); $('#test').focus()} else {$('#test').val('').closest('.box').hide()};

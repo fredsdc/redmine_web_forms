@@ -26,6 +26,7 @@
   <td class="role"><%= webform.role %></td>
   <td><%= checked_image webform.validate_webform(nil) %></td>
   <td class="buttons">
+    <%= link_to l(:button_view), webform_path(webform), {:class => 'icon icon-document'}  %>
     <%= delete_link webform_path(webform) %>
   </td>
   </tr>
