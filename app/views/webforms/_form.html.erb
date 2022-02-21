@@ -15,7 +15,7 @@
   <div id="custom_fields">
     <%= render :partial => 'webform_custom_field_values' %>
   </div>
-  <%= link_to l(:label_custom_field_new), "", :class => 'icon icon-add', :onclick => 'addCustomField(this); renumber_list(".webform_custom_field_values"); return false;' %>
+  <%= link_to l(:label_custom_field_new), "", :class => 'icon icon-add', :onclick => 'addCustomField(); renumber_list(".webform_custom_field_values"); return false;' %>
 </div>
 
 <div class="box tabular sortable_questions">
@@ -26,15 +26,15 @@
       <% n += 1 %>
     <% end %>
   </div>
-  <%= link_to l(:label_question_new), "", :class => 'icon icon-add', :onclick => 'addQuestion(this); renumber_list(".sortable_questions"); return false;' %>
+  <%= link_to l(:label_question_new), "", :class => 'icon icon-add', :onclick => 'addQuestion(); renumber_list(".sortable_questions"); return false;' %>
 </div>
 
 <%= javascript_tag do %>
-  function addQuestion(el) {
+  function addQuestion() {
     $("<%= escape_javascript render :partial => 'question', :locals => {:q => Question.new, :n => n} %>").appendTo('#questions')
   };
 
-  function addCustomField(el) {
+  function addCustomField() {
     $("<%= escape_javascript render :partial => 'webform_custom_field_value', :locals => {:wcfv => WebformCustomFieldValue.new, :n => n} %>").appendTo('#custom_fields')
   };
 
