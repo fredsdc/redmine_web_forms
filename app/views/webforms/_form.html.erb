@@ -1,6 +1,7 @@
 <%= error_messages_for 'webform' %>
 
 <div class="box tabular">
+  <p><%= f.text_field :identifier, :required => true %></p>
   <p><%= f.text_field :title, :required => true %></p>
   <p><%= f.text_area :description, :rows => 8, :class => 'wiki-edit' %></p>
   <%= wikitoolbar_for 'webform_description' %>

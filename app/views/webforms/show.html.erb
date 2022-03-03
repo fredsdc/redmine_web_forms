@@ -1,5 +1,8 @@
 <h2><%= @webform.title %></h2>
 
+<%= error_messages_for 'webform' %>
+<%= error_messages_for 'issue' %>
+
 <% if @webform.description.present? %>
   <div class="wiki">
     <%= textilizable @webform.description %>
@@ -8,8 +11,6 @@
 
 <% values=@issue.editable_custom_field_values.group_by{|x| x.custom_field_id} %>
 <%= labelled_form_for @issue, :url => { :action => "new_issue" } do |f| %>
-  <%= error_messages_for 'webform' %>
-  <%= error_messages_for 'issue' %>
 
   <% @webform.webform_custom_field_values.each do |w| %>
     <% if w.custom_field.present? || [-1,-2,-3,-4,-5].include?(w.custom_field_id) %>

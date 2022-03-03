@@ -60,7 +60,7 @@ class WebformsController < ApplicationController
   end
 
   def show
-    @webform = find_webform
+    @webform = find_webform_by_identifier
     if @webform.validate_webform
       @issue = Issue.new(project: @webform.project, tracker:@webform.tracker)
     else
@@ -75,7 +75,7 @@ class WebformsController < ApplicationController
   end
 
   def new_issue
-    @webform = find_webform
+    @webform = find_webform_by_identifier
     @user = User.current
     if @webform.validate_webform
       # Add user to group if not already
@@ -140,6 +140,10 @@ class WebformsController < ApplicationController
 
   def find_webform
     Webform.find(params[:id])
+  end
+
+  def find_webform_by_identifier
+    Webform.where(identifier: params[:id]).first
   end
 
   def get_variables_from_webform

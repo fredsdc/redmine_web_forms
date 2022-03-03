@@ -1,6 +1,8 @@
 class Webform < ActiveRecord::Base
   include Redmine::SafeAttributes
 
+  IDENTIFIER_MAX_LENGTH = 100
+
   has_many :webform_custom_field_values, -> {order(:position)}, :dependent => :delete_all
   has_many :questions, -> {order(:position)}, :dependent => :delete_all
 
@@ -10,8 +12,14 @@ class Webform < ActiveRecord::Base
   belongs_to :role
   belongs_to :issue_status
 
-  validates_presence_of :title
-  validate :identifier_uniqueness
+  validates_presence_of :title, :identifier
+  validates_uniqueness_of :identifier, :if => Proc.new {|p| p.identifier_changed?}
+  validates_length_of :identifier, :maximum => IDENTIFIER_MAX_LENGTH
+  # downcase letters, digits, dashes but not digits only
+  validates_format_of :identifier, :with => /\A(?!\d+$)[a-z0-9\-_]*\z/, :if => Proc.new { |p| p.identifier_changed? }
+  # reserved words
+  validates_exclusion_of :identifier, :in => %w( new update_selects update_custom_field )
+  validate :question_identifier_uniqueness
 
   safe_attributes(
     'title',
@@ -22,7 +30,8 @@ class Webform < ActiveRecord::Base
     'role_id',
     'issue_status_id',
     'questions',
-    'webform_custom_field_values')
+    'webform_custom_field_values',
+    'identifier')
 
   def validate_webform(user=User.current)
       roles = (
@@ -54,7 +63,7 @@ class Webform < ActiveRecord::Base
     )
   end
 
-  def identifier_uniqueness
+  def question_identifier_uniqueness
     rep_str = (
       questions.map{|x| x.identifier} +
       webform_custom_field_values.map{|x| x.identifier} -

@@ -7,6 +7,7 @@
 <table class="list trackers">
   <thead><tr>
   <th><%=l(:field_title)%></th>
+  <th><%=l(:field_identifier)%></th>
   <th><%=l(:field_project)%></th>
   <th><%=l(:label_tracker)%></th>
   <th><%=l(:field_default_status)%></th>
@@ -19,6 +20,7 @@
 <% for webform in @webforms %>
   <tr>
   <td class="name"><%= link_to webform.title, edit_webform_path(webform) %></td>
+  <td class="identifier"><%= link_to webform.identifier, edit_webform_path(webform) %></td>
   <td class="project"><%= webform.project %></td>
   <td class="tracker"><%= webform.tracker %></td>
   <td class="status"><%= webform.issue_status %></td>
@@ -26,7 +28,7 @@
   <td class="role"><%= webform.role %></td>
   <td><%= checked_image webform.validate_webform(nil) %></td>
   <td class="buttons">
-    <%= link_to l(:button_view), webform_path(webform), {:class => 'icon icon-document'}  %>
+    <%= link_to l(:button_view), webform_path(webform.identifier), {:class => 'icon icon-document'}  %>
     <%= delete_link webform_path(webform) %>
   </td>
   </tr>
