@@ -10,3 +10,4 @@ pt-BR:
   label_question_new: Nova questão
   field_hidden: Esconder
   field_onchange: Onchange
+  label_default_value_unavailable: Valor padrão indisponível

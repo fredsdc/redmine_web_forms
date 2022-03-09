@@ -29,6 +29,8 @@
         <p><%= f.label :default_value %><%= custom_field_tag(:custom_field, wcfv).
           gsub(/ name="(.+?)"/, ' name="webform_custom_field_values[default_value]"').html_safe %></p>
         <%= wikitoolbar_for "custom_field_custom_field_values_#{wcfv.custom_field_id}" if wcfv.custom_field.present? && wcfv.custom_field.full_text_formatting? %>
+      <% else %>
+        <p><i><%= l(:label_default_value_unavailable) %></i></p>
       <% end %>
     <% else %>
       <p><%= f.text_field :default_value, :size => 80, :nolabel => true %></p>

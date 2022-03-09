@@ -12,3 +12,4 @@ en:
   label_question_new: New Question
   field_hidden: Hidden
   field_onchange: Onchange
+  label_default_value_unavailable: Unavailable default value
