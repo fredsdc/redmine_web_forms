@@ -16,7 +16,7 @@
   <div id="custom_fields">
     <%= render :partial => 'webform_custom_field_values' %>
   </div>
-  <%= link_to l(:label_custom_field_new), "", :class => 'icon icon-add', :onclick => 'addCustomField(); renumber_list(".webform_custom_field_values"); return false;' %>
+  <%= link_to l(:label_custom_field_new), "", :class => 'icon icon-add', :onclick => 'addCustomField(); renumber_list(".webform_custom_field_values"); updateWebformCustomField($(".webform_custom_field_values select").last()); return false;' %>
 </div>
 
 <div class="box tabular sortable_questions">
