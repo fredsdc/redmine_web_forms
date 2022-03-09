@@ -33,7 +33,7 @@
   <% end %>
 
   <% @webform.questions.each do |q| %>
-    <div class="box tabular" <%= q.hidden? ? 'style="display: none;"'.html_safe : '' %>>
+    <div class="box" <%= q.hidden? ? 'style="display: none;"'.html_safe : '' %>>
       <% if q.custom_field.present? || [-1,-2,-3,-4,-5].include?(q.custom_field_id) %>
         <% if q.custom_field_id == -1 && @issue.safe_attribute?('assigned_to_id') %>
           <p><%= q.description %></p>
