@@ -9,7 +9,7 @@
   </div>
 <% end %>
 
-<% values=@issue.editable_custom_field_values.group_by{|x| x.custom_field_id} %>
+<% values=@issue.custom_field_values.map{|x| [x.custom_field.id, x]}.to_h %>
 <%= labelled_form_for @issue, :url => { :action => "new_issue" } do |f| %>
 
   <% @webform.webform_custom_field_values.each do |w| %>
@@ -62,7 +62,7 @@
         <% elsif @issue.safe_attribute? 'custom_field_values' %>
           <p><%= q.description %></p>
           <% id = q.identifier.present? ? q.identifier : custom_field_tag_id(:issue, q.custom_field) %>
-          <p><%= custom_field_tag(:issue, values[q.custom_field_id][0]).
+          <p><%= custom_field_tag(:issue, values[q.custom_field_id]).
             gsub(/ id="(.+?)"/, ' id="' + id + '" onchange="' + q.onchange + '"' ).html_safe if q.custom_field.present? %></p>
           <%= wikitoolbar_for id if q.custom_field.present? && q.custom_field.full_text_formatting? %>
         <% end %>
