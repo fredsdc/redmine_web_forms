@@ -23,6 +23,7 @@ class WebformsController < ApplicationController
 
     if @webform.save
       flash[:notice] = l(:notice_successful_create)
+      webform_custom_field_warnings
       respond_to do |format|
         format.html { redirect_back_or_default webforms_path }
       end
@@ -43,6 +44,7 @@ class WebformsController < ApplicationController
 
       if @webform.save
         flash[:notice] = l(:notice_successful_update)
+        webform_custom_field_warnings
         respond_to do |format|
           format.html { redirect_back_or_default webforms_path }
         end
@@ -231,6 +233,27 @@ class WebformsController < ApplicationController
     @webform.webform_custom_field_values=[]
     param_attrs.values.each do |p|
       @webform.webform_custom_field_values.new.safe_attributes = p
+    end
+  end
+
+  def webform_custom_field_warnings
+    warnings=[]
+    if @webform.project.present? && @webform.tracker.present? && @webform.issue_status.present?
+      roles = (Member.where(user_id: @webform.group_id, project_id: @webform.project_id).map{|m| m.roles.ids}.flatten |
+        [@webform.role_id] - [nil]).presence || [1]
+
+      @webform.questions.select{|x| x.custom_field.present?}.map{|x| x.custom_field}.each do |cf|
+        unless cf.visible? || (roles & cf.roles.ids - WorkflowPermission.where(tracker_id: @webform.tracker_id,
+               old_status_id: @webform.issue_status_id, workspace_id: @webform.project.workspace_id, field_name: cf.id.to_s,
+               rule: "readonly").pluck(:role_id)).any?
+          warnings += [l(:notice_no_role_for_custom_field, :name => cf.name)]
+        end
+      end
+    else
+      warnings += [l(:notice_skip_custom_field_verification)]
+    end
+    if warnings.present?
+      flash[:warning] = flash[:warning].present? ? ([ flash[:warning] ] + warnings).join(" ") : warnings.join(" ")
     end
   end
 end
