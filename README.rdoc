@@ -1,33 +1,57 @@
 = Redmine Web Forms
 
-This plugin manages Redmine Web Forms as an alternative to creating new issues.
+This plugin manages Redmine Web Forms as an alternative to create new issues, like Forms, or internet surveys.
 
 It creates a new entry in the admin menu to manage webforms.
 
-# Forms
+== Forms
 
-1. Forms have a title, and a description what it is for.
-2. Forms will eventually create an issue of selected type, on selected project, with selected status.
-3. Optionally, a form may add the user taking it to a selected role on the project, or to a Redmine group
-4. Forms may have Custom Fields and Questions
+1. Forms have an unique identifier. It will be part of their URL, so only characters that could be part of the url are allowed.
+1. Forms have a title, and a description (introductions, tips, what it is for).
+1. Forms will eventually create an issue of selected type, on selected project, with selected status. Forms are kept in maintenance mode until their project, tracker and initial status are selected.
+1. Optionally, a form may add the user taking it to a selected role on the project, or include the user in a Redmine group. If these fields are left blank, the form will still show up for users that already have permission to create the issue in its project. For other users it would show as if in maintenance mode.
+1. Forms may have Custom Fields and Questions, described below:
 
-# Custom Fields
+== Custom Fields
 
-1. Custom fields are fields automaticaly filled by the form
-2. Fields may relate to a custom field of the issue setting a custom value
-3. Fields may have an identifier to be used by javascript on questions
+1. Custom fields are fields that the Form creator want to fill automatically with a default form value.
+1. Custom fields may have an (html) identifier.
+1. Custom fields values set in the html are ignored when submitting the form (values comes from the database).
 
-# Questions
+== Questions
 
-1. Questions have a description (the actual question text)
-2. Questions may fill an issue custom field directly
-3. If not associated with a custom field, questions may have possible values (a list)
-4. Questions may have an identifier to be used by javascript
-5. Questions may have onchange javascript
-6. Questions may be initially hidden
+1. Questions are values the Form creator would want to manipulate.
+1. Questions have a description (the actual question text) that would show in the Form.
+1. Questions may fill an issue custom field directly if specified which.
+1. If not specified, the answer would take form of a text input or list, if possible values are specified.
+1. Questions may have an (html) identifier.
+1. Questions may have onchange javascript.
+1. Questions may be initially hidden.
 
-Examples of onchange javascript:
+== Javascript
 
-if ($(this).val() == 1){$('#test').closest('.box').show(); $('#test').focus()} else {$('#test').val('').closest('.box').hide()};
+1. You can use jquery. Get value like this:
 
-if ($(this).val().toLowerCase().includes('test')){$('#test').closest('.box').show(); $('#test').focus()} else {$('#test').val('').closest('.box').hide()};
+  $(this).val()
+
+  $('#<identifier>').val()
+
+1. To hide/show and element, refer to its closest '.box':
+
+  $('#<identifier>').closest('.box')
+
+== Examples of onchange javascript:
+
+  if ($(this).val() == 1){
+    $('#test').closest('.box').show();
+    $('#test').focus()
+  } else {
+    $('#test').val('').closest('.box').hide()
+  };
+
+  if ($(this).val().toLowerCase().includes('test')){
+    $('#test').closest('.box').show();
+    $('#test').focus()
+  } else {
+    $('#test').val('').closest('.box').hide()
+  };
