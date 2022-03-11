@@ -200,15 +200,6 @@ class WebformsController < ApplicationController
     @issue.author ||= @user
     @issue.start_date ||= @user.today if Setting.default_issue_start_date_to_creation_date?
 
-    param_attrs = (params[:issue] || {}).deep_dup
-    attrs = param_attrs.slice("custom_field_values")
-    attrs["assigned_to_id"]=param_attrs["assigned_to_id"]     if @webform.questions.map{|w| w.custom_field_id}.include?(-1)
-    attrs["category_id"]=param_attrs["category_id"]           if @webform.questions.map{|w| w.custom_field_id}.include?(-2)
-    attrs["description"]=param_attrs["description"]           if @webform.questions.map{|w| w.custom_field_id}.include?(-3)
-    attrs["subject"]=param_attrs["subject"]                   if @webform.questions.map{|w| w.custom_field_id}.include?(-4)
-    attrs["fixed_version_id"]=param_attrs["fixed_version_id"] if @webform.questions.map{|w| w.custom_field_id}.include?(-5)
-    @issue.safe_attributes = attrs
-
     @webform.webform_custom_field_values.each do |cf|
       @issue.assigned_to_id = cf.value                                 if cf.custom_field_id == -1
       @issue.category_id = cf.value                                    if cf.custom_field_id == -2
@@ -217,6 +208,21 @@ class WebformsController < ApplicationController
       @issue.fixed_version_id = cf.value                               if cf.custom_field_id == -5
       @issue.custom_field_values = {"#{cf.custom_field_id}": cf.value} if cf.custom_field.present?
     end
+
+    param_attrs = (params[:issue] || {}).deep_dup
+
+    attrs = {"custom_field_values"=>{}}
+    @webform.questions.map{|x| x.custom_field_id.to_i}.select{|x| x != 0}.each do |x|
+      case x
+      when -1; attrs["assigned_to_id"]=param_attrs["assigned_to_id"]
+      when -2; attrs["category_id"]=param_attrs["category_id"]
+      when -3; attrs["description"]=param_attrs["description"]
+      when -4; attrs["subject"]=param_attrs["subject"]
+      when -5; attrs["fixed_version_id"]=param_attrs["fixed_version_id"]
+      else;    attrs["custom_field_values"][x.to_s]=param_attrs["custom_field_values"][x.to_s]
+      end
+    end
+    @issue.safe_attributes = attrs
   end
 
   def update_webform_from_params
