@@ -156,8 +156,7 @@ class WebformsController < ApplicationController
         @statuses = IssueStatus.find(
           WorkflowTransition.where(
             old_status_id: 0,
-            tracker_id: @webform.tracker_id,
-            workspace_id: @webform.project.workspace_id
+            tracker_id: @webform.tracker_id
           ).pluck(:new_status_id) |
           [ @webform.tracker.default_status_id ]
         ).map{|t| [t.name, t.id]}
@@ -250,7 +249,7 @@ class WebformsController < ApplicationController
 
       @webform.questions.select{|x| x.custom_field.present?}.map{|x| x.custom_field}.each do |cf|
         unless cf.visible? || (roles & cf.roles.ids - WorkflowPermission.where(tracker_id: @webform.tracker_id,
-               old_status_id: @webform.issue_status_id, workspace_id: @webform.project.workspace_id, field_name: cf.id.to_s,
+               old_status_id: @webform.issue_status_id, field_name: cf.id.to_s,
                rule: "readonly").pluck(:role_id)).any?
           warnings += [l(:notice_no_role_for_custom_field, :name => cf.name)]
         end

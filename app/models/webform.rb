@@ -48,8 +48,7 @@ class Webform < ActiveRecord::Base
       WorkflowTransition.where(
         old_status_id: 0,
         tracker_id: self.tracker_id,
-        role_id: roles.map{|r| r.id},
-        workspace_id: self.project.workspace_id
+        role_id: roles.map{|r| r.id}
       ).map{|w| w.new_status_id}.include?(self.issue_status_id)
   end
 
