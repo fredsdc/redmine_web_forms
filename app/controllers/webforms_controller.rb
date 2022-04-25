@@ -2,6 +2,8 @@ class WebformsController < ApplicationController
   before_action :require_login
   before_action :require_admin, :except => [:show, :new_issue]
 
+  helper :custom_fields
+
   def index
     @webforms = Webform.all
   end
@@ -65,10 +67,16 @@ class WebformsController < ApplicationController
     @webform = find_webform_by_identifier
     if @webform.validate_webform
       @issue = Issue.new(project: @webform.project, tracker:@webform.tracker)
-    else
-      render_error :message => l(:error_webform_in_maintenance), :status => 403
-      return false
+      # Proceed if there are no invalid custom fields
+      return true if (
+        @webform.webform_custom_field_values.map(&:custom_field_id) +
+        @webform.questions.map(&:custom_field_id) -
+        @issue.custom_field_values.map(&:custom_field_id)
+      ).select{|i| i.to_i > 0}.empty?
     end
+
+    render_error :message => l(:error_webform_in_maintenance), :status => 403
+    return false
   end
 
   def destroy
