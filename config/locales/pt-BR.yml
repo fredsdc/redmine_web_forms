@@ -8,6 +8,7 @@ pt-BR:
   label_optional: opcional
   label_question: Questão
   label_question_new: Nova questão
+  label_add_user_to: Adicionar usuário como membro do projeto ou a um grupo?
   field_hidden: Esconder
   field_onchange: Onchange
   label_default_value_unavailable: Valor padrão indisponível
