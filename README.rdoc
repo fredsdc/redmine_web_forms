@@ -55,3 +55,45 @@ It creates a new entry in the admin menu to manage webforms.
   } else {
     $('#test').val('').closest('.box').hide()
   };
+
+== Usage:
+
+1. Go to Admininstration > Webforms, click on New webform
+
+1. Enter Identifier (name that goes in the URL), Title and Description (the form headers)
+
+1. When an user answers the form, Redmine will create an issue. In Options, enter its Project, Tracker and Status
+
+1. The form will be "In maintenance" if the user doesn't have permission to create it. Optionally, in "Add user..." you can give him a role in the project or put him in a group
+
+  * The form will still be "In maintenance" if the role/group doesn't give the user permission to create the issue
+
+  * In Admininstration > Webforms, the column "Adds user" checks if the role or group gives the user permission to create the issue
+
+1. Add New custom field(s)
+
+  A Custom fields is always hidden in the webform. It allows you to assign values to fields on the issue. Values here, if valid, overwrite anything else when creating the form.
+
+  1. Enter the custom field and value to assign to it in the new issue
+
+  1. Enter an identifier if you want to read this value using javascript
+
+1. Add Question(s)
+
+  Questions are very flexible. They can refer to a field on the issue directly or indirectly.
+
+  1. You may add a Text to the question in Description
+
+  1. If you chose a custom field, the question will refer to a custom field directly, and use this field restrictions
+
+  1. If no custom field is selected, you may assign possible values to create a list of options, one on each line
+
+  1. Assign an Identifier if you want to manipulate this question using javascript
+
+  1. On onchange, enter the javascript to be executed when the value of this question changes
+
+  1. Check Hidden if this question will initially appear hidden (can be shown using javascript)
+
+Add as many custom fields and questions as needed. You can drag them around to change their order.
+
+Submit.
