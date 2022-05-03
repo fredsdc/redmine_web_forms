@@ -3,6 +3,4 @@
 <p><%= f.select :project_id, project_tree_options_for_select(@projects, :selected => @webform.project), {:include_blank => true}, :onchange => "updateFields();" %></p>
 <p><%= f.select :tracker_id, options_for_select(@trackers, :selected => @webform.tracker_id), {:include_blank => true}, :onchange => "updateFields();" %></p>
 <p><%= f.select :issue_status_id, options_for_select(@statuses, :selected => @webform.issue_status_id), {:include_blank => true, :label => :label_issue_status} %></p>
-<p><%= f.select :role_id, options_for_select(@roles, :selected => @webform.role_id), {:include_blank => true} %></p>
-<p><%= f.select :group_id, options_for_select(@groups, :selected => @webform.group_id), {:include_blank => true, :label => :label_group} %></p>
 <% end %>
