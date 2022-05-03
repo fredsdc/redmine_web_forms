@@ -158,10 +158,10 @@ class WebformsController < ApplicationController
 
   def get_variables_from_webform
     if @webform.project.present? && @webform.project.active?
-      @trackers =  @webform.project.trackers.order(:name).map{|t| [t.name, t.id]}
+      @trackers =  @webform.project.trackers.reorder(:name).map{|t| [t.name, t.id]}
       @custom_fields = issue_core_fields
       if @trackers.map{|k,v| v}.include?(@webform.tracker_id)
-        @statuses = IssueStatus.find(
+        @statuses = IssueStatus.sorted.find(
           WorkflowTransition.where(
             old_status_id: 0,
             tracker_id: @webform.tracker_id,
@@ -191,12 +191,12 @@ class WebformsController < ApplicationController
   def default_parameters
     @projects = Project.all.active
     @trackers = Tracker.order(:name).map{|t| [t.name, t.id]}
-    @statuses = IssueStatus.find(
+    @statuses = IssueStatus.sorted.find(
       WorkflowTransition.where(old_status_id: 0).pluck(:new_status_id) |
       Tracker.all.map{|t| t.default_status_id}
     ).map{|t| [t.name, t.id]}
-    @roles = Role.select{|r| r.has_permission?(:add_issues)}.pluck(:name, :id)
-    @groups = Group.all.pluck(:lastname, :id)
+    @roles = Role.sorted.select{|r| r.has_permission?(:add_issues)}.pluck(:name, :id)
+    @groups = Group.sorted.pluck(:lastname, :id)
     @custom_fields = issue_core_fields + CustomField.order(:name).pluck(:name, :id)
   end
 
