@@ -112,12 +112,8 @@ class WebformsController < ApplicationController
 
       # Add user to role in project if not already
       if @webform.role.present?
-        unless @user.roles_for_project(@webform.project).include?(@webform.role)
-          if @user.membership(@webform.project).nil?
-            Member.create(user: @user, project: @webform.project, roles: [@webform.role])
-          else
-            @user.membership(@webform.project).roles+=[@webform.role]
-          end
+        unless @user.dup.roles_for_project(@webform.project).include?(@webform.role)
+          Member.create_principal_memberships(@user, :project_ids => [@webform.project_id], :role_ids => [@webform.role_id])
         end
       end
 
