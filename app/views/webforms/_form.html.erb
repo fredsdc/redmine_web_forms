@@ -31,7 +31,7 @@
       <% n += 1 %>
     <% end %>
   </div>
-  <%= link_to l(:label_question_new), "", :class => 'icon icon-add', :onclick => 'addQuestion(); renumber_list(".sortable_questions"); return false;' %>
+  <%= link_to l(:label_question_new), "", :class => 'icon icon-add', :onclick => 'addQuestion(); renumber_list(".sortable_questions"); updateFields(); return false;' %>
 </div>
 
 <%= javascript_tag do %>
