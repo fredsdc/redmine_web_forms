@@ -13,7 +13,7 @@
 <%= labelled_form_for @issue, :url => { :action => "new_issue" } do |f| %>
 
   <% @webform.webform_custom_field_values.each do |w| %>
-    <% if w.custom_field.present? || [-1,-2,-3,-4,-5].include?(w.custom_field_id) %>
+    <% if w.custom_field.present? || [-1,-2,-3,-4,-5,-6].include?(w.custom_field_id) %>
       <% if w.custom_field_id == -1 && @issue.safe_attribute?('assigned_to_id') %>
         <%= f.hidden_field :assign_to_id, {:value => w.default_value, :id => w.identifier} %>
       <% elsif w.custom_field_id == -2 && @issue.safe_attribute?('category_id') %>
@@ -24,6 +24,8 @@
         <%= f.hidden_field :subject, {:value => w.default_value, :id => w.identifier} %>
       <% elsif w.custom_field_id == -5 && @issue.safe_attribute?('fixed_version_id') %>
         <%= f.hidden_field :fixed_version_id, {:value => w.default_value, :id => w.identifier} %>
+      <% elsif w.custom_field_id == -6 && @issue.safe_attribute?('priority_id') %>
+        <%= f.hidden_field :priority_id, {:value => w.default_value, :id => w.identifier} %>
       <% elsif @issue.safe_attribute? 'custom_field_values'  %>
         <%= hidden_field_tag "issue[custom_field_values][#{w.custom_field_id}]", w.default_value, { :id => w.identifier } if w.custom_field.present? %>
       <% end %>
@@ -34,7 +36,7 @@
 
   <% @webform.questions.each do |q| %>
     <div class="box" <%= q.hidden? ? 'style="display: none;"'.html_safe : '' %>>
-      <% if q.custom_field.present? || [-1,-2,-3,-4,-5].include?(q.custom_field_id) %>
+      <% if q.custom_field.present? || [-1,-2,-3,-4,-5,-6].include?(q.custom_field_id) %>
         <% if q.custom_field_id == -1 && @issue.safe_attribute?('assigned_to_id') %>
           <p><%= q.description %></p>
           <p><%= f.select :assigned_to_id, principals_options_for_select(@issue.assignable_users, @issue.assigned_to),
@@ -59,6 +61,10 @@
           <p><%= q.description %></p>
           <p><%= f.select :fixed_version_id, (@issue.project.versions.collect{|c| [c.name, c.id]}),
                           {:no_label => true, :include_blank => true}, {:id => q.identifier, :onchange => q.onchange} %></p>
+        <% elsif q.custom_field_id == -6 && @issue.safe_attribute?('priority_id') %>
+          <p><%= q.description %></p>
+          <p><%= f.select :priority_id, (@priorities.collect{|c| [c.name, c.id]}),
+                          {:no_label => true}, {:id => q.identifier, :onchange => q.onchange} %></p>
         <% elsif @issue.safe_attribute? 'custom_field_values' %>
           <p><%= q.description %></p>
           <% id = q.identifier.present? ? q.identifier : custom_field_tag_id(:issue, q.custom_field) %>

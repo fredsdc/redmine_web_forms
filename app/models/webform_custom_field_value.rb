@@ -25,7 +25,7 @@ class WebformCustomFieldValue < ActiveRecord::Base
 
   scope :sorted, lambda { order(:position) }
 
-  validates :custom_field_id, :numericality => { :only_integer => true, :greater_than_or_equal_to => -5, :other_than => 0, :message => :invalid }, :allow_blank => true
+  validates :custom_field_id, :numericality => { :only_integer => true, :greater_than_or_equal_to => -6, :other_than => 0, :message => :invalid }, :allow_blank => true
   validates_presence_of :custom_field, :if => lambda { custom_field_id.to_i > 0 }
   validates_format_of :identifier, :with => /\A(?!\d+$)[a-z0-9\-_]*\z/
   validate :default_value_is_valid
