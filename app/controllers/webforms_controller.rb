@@ -106,6 +106,7 @@ class WebformsController < ApplicationController
   def new_issue
     @webform = find_webform_by_identifier
     @user = User.current
+    @priorities = IssuePriority.active
     if @webform.validate_webform
       # Add user to group if not already
       if @webform.group.present?
