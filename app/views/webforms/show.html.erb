@@ -12,6 +12,7 @@
 <% values=@issue.custom_field_values.map{|x| [x.custom_field.id, x]}.to_h %>
 <%= labelled_form_for @issue, :url => { :action => "new_issue" } do |f| %>
 
+  <%= f.hidden_field :author, {:value => @issue.author.name, :id => 'author'} %>
   <% @webform.webform_custom_field_values.each do |w| %>
     <% if w.custom_field.present? || [-1,-2,-3,-4,-5,-6].include?(w.custom_field_id) %>
       <% if w.custom_field_id == -1 && @issue.safe_attribute?('assigned_to_id') %>
