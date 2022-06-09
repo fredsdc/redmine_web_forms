@@ -251,6 +251,9 @@ class WebformsController < ApplicationController
       else;    attrs["custom_field_values"][x.to_s]=param_attrs["custom_field_values"][x.to_s]
       end
     end
+    if @issue.attachments_addable?(@user) && @webform.allow_attachments
+      @issue.save_attachments(params[:attachments].except("dummy") || (params[:issue] && params[:issue][:uploads]))
+    end
     @issue.safe_attributes = attrs
   end
 

@@ -11,6 +11,7 @@ pt-BR:
   label_add_user_to: Adicionar usuário como membro do projeto ou a um grupo?
   field_hidden: Esconder
   field_onchange: Onchange
+  field_allow_attachments: Permitir anexos
   label_default_value_unavailable: Valor padrão indisponível
   notice_no_role_for_custom_field: "Não há papéis que tratem o campo %{name}."
   notice_skip_custom_field_verification: "Pular verificação de campo customizado: sem projeto, tipo de tarefa ou status."

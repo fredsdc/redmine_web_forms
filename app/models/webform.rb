@@ -48,14 +48,12 @@ class Webform < ActiveRecord::Base
     'issue_status_id',
     'questions',
     'webform_custom_field_values',
-    'identifier')
+    'identifier',
+    'allow_attachments'
+  )
 
   def validate_webform(user=User.current)
-    roles = (
-      (user.present? ? User.find(user.id).roles_for_project(self.project) : []) |
-      (self.role.present? ? [ self.role ] : []) |
-      Member.where(user_id: self.group_id, project_id: self.project_id).map{|m| m.roles}
-    ).flatten.uniq
+    roles = get_user_roles(user)
 
     self.project.present? &&
     self.tracker.present? &&
@@ -70,6 +68,18 @@ class Webform < ActiveRecord::Base
     ).map{|w| w.new_status_id}.include?(self.issue_status_id)
   end
 
+  def can_add_attachments(user=User.current)
+    roles = get_user_roles(user)
+
+    roles.map{|role|
+      role.has_permission?(:add_attachments) &&
+      (
+        role.permissions_all_trackers?(:add_attachments) ||
+        role.permissions_tracker_ids(:add_attachments).include?(self.tracker_id)
+      )
+    }.any?
+  end
+
   private
 
   def can_add_issue(role)
@@ -78,6 +88,14 @@ class Webform < ActiveRecord::Base
       role.permissions_all_trackers?(:add_issues) ||
       role.permissions_tracker_ids(:add_issues).include?(self.tracker_id)
     )
+  end
+
+  def get_user_roles(user)
+    (
+      (user.present? ? User.find(user.id).roles_for_project(self.project) : []) |
+      (self.role.present? ? [ self.role ] : []) |
+      Member.where(user_id: self.group_id, project_id: self.project_id).map{|m| m.roles}
+    ).flatten.uniq
   end
 
   def question_identifier_uniqueness
