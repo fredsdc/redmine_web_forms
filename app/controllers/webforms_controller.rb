@@ -85,7 +85,7 @@ class WebformsController < ApplicationController
     @priorities = IssuePriority.active
 
     if @webform.validate_webform
-      @issue = Issue.new(project: @webform.project, tracker:@webform.tracker)
+      @issue = Issue.new(project: @webform.project, tracker:@webform.tracker, author:User.current)
       # Proceed if there are no invalid custom fields
       return true if (
         @webform.webform_custom_field_values.map(&:custom_field_id) +
