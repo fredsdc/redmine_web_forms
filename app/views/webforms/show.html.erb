@@ -83,7 +83,7 @@
       <% end %>
     </div>
   <% end %>
-  <% if @webform.can_add_attachments(@user) && @webform.allow_attachments %>
+  <% if @webform.can_add_attachments(User.current) && @webform.allow_attachments %>
     <div class="box filedroplistener">
       <p id="attachments_form"><label><%= l(:label_attachment_plural) %></label><%= render :partial => 'attachments/form', :locals => {:container => @issue} %></p>
     </div>
