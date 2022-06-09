@@ -52,7 +52,7 @@ class Webform < ActiveRecord::Base
 
   def validate_webform(user=User.current)
     roles = (
-      (user.present? ? user.dup.roles_for_project(self.project) : []) |
+      (user.present? ? User.find(user.id).roles_for_project(self.project) : []) |
       (self.role.present? ? [ self.role ] : []) |
       Member.where(user_id: self.group_id, project_id: self.project_id).map{|m| m.roles}
     ).flatten.uniq
