@@ -92,7 +92,15 @@ class Webform < ActiveRecord::Base
 
   def get_user_roles(user)
     (
-      (user.present? ? User.find(user.id).roles_for_project(self.project) : []) |
+      if user.present?
+        if user.admin?
+          self.project.members.map{|m| m.roles}
+        else
+          User.find(user.id).roles_for_project(self.project)
+        end
+      else
+        []
+      end |
       (self.role.present? ? [ self.role ] : []) |
       Member.where(user_id: self.group_id, project_id: self.project_id).map{|m| m.roles}
     ).flatten.uniq
