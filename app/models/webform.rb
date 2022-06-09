@@ -51,11 +51,7 @@ class Webform < ActiveRecord::Base
     'identifier')
 
   def validate_webform(user=User.current)
-    roles = (
-      (user.present? ? User.find(user.id).roles_for_project(self.project) : []) |
-      (self.role.present? ? [ self.role ] : []) |
-      Member.where(user_id: self.group_id, project_id: self.project_id).map{|m| m.roles}
-    ).flatten.uniq
+    roles = get_user_roles(user)
 
     self.project.present? &&
     self.tracker.present? &&
@@ -77,6 +73,22 @@ class Webform < ActiveRecord::Base
       role.permissions_all_trackers?(:add_issues) ||
       role.permissions_tracker_ids(:add_issues).include?(self.tracker_id)
     )
+  end
+
+  def get_user_roles(user)
+    (
+      if user.present?
+        if user.admin?
+          self.project.members.map{|m| m.roles}
+        else
+          User.find(user.id).roles_for_project(self.project)
+        end
+      else
+        []
+      end |
+      (self.role.present? ? [ self.role ] : []) |
+      Member.where(user_id: self.group_id, project_id: self.project_id).map{|m| m.roles}
+    ).flatten.uniq
   end
 
   def question_identifier_uniqueness
