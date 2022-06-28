@@ -64,10 +64,14 @@
           <p><%= q.description %></p>
           <p><%= f.select :fixed_version_id, (@issue.project.versions.collect{|c| [c.name, c.id]}),
                           {:no_label => true, :include_blank => true}, {:id => q.identifier, :onchange => q.onchange} %></p>
-        <% elsif q.custom_field_id == -7 && @issue.safe_attribute?('priority_id') %>
+        <% elsif q.custom_field_id == -6 && @issue.safe_attribute?('priority_id') %>
           <p><%= q.description %></p>
           <p><%= f.select :priority_id, (@priorities.collect{|c| [c.name, c.id]}),
                           {:no_label => true}, {:id => q.identifier, :onchange => q.onchange} %></p>
+        <% elsif q.custom_field_id == -7 %>
+          <p><%= q.description %></p>
+          <p><%= f.number_field :subject, :size => 80, :maxlength => 255, :label => "", :id => q.identifier,
+                              :onchange => q.onchange %></p>
         <% elsif @issue.safe_attribute? 'custom_field_values' %>
           <p><%= q.description %></p>
           <% id = q.identifier.present? ? q.identifier : custom_field_tag_id(:issue, q.custom_field) %>
