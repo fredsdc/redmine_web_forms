@@ -201,7 +201,8 @@ class WebformsController < ApplicationController
       [ l(:field_description), -3],
       [ l(:field_subject), -4],
       [ l(:field_fixed_version), -5],
-      [ l(:field_priority), -6]
+      [ l(:field_priority), -6],
+      [ l(:field_parent_issue), -7]
     ]
   end
 
@@ -233,6 +234,7 @@ class WebformsController < ApplicationController
       @issue.subject = cf.value                                        if cf.custom_field_id == -4
       @issue.fixed_version_id = cf.value                               if cf.custom_field_id == -5
       @issue.priority_id = cf.value                                    if cf.custom_field_id == -6
+      @issue.parent_id = cf.value                                      if cf.custom_field_id == -7
       @issue.custom_field_values = {"#{cf.custom_field_id}": cf.value} if cf.custom_field.present?
     end
 
@@ -247,6 +249,7 @@ class WebformsController < ApplicationController
       when -4; attrs["subject"]=param_attrs["subject"]
       when -5; attrs["fixed_version_id"]=param_attrs["fixed_version_id"]
       when -6; attrs["priority_id"]=param_attrs["priority_id"]
+      when -7; attrs["parent_id"]=param_attrs["parent_id"]
       else;    attrs["custom_field_values"][x.to_s]=param_attrs["custom_field_values"][x.to_s]
       end
     end

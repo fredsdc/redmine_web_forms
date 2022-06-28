@@ -9,7 +9,7 @@
         <p><%= f.text_field :identifier %></p>
       </div>
     </div>
-    <% if wcfv.custom_field.present? || [-1,-2,-3,-4,-5,-6].include?(wcfv.custom_field_id) %>
+    <% if wcfv.custom_field.present? || [-1,-2,-3,-4,-5,-6,-7].include?(wcfv.custom_field_id) %>
       <% if wcfv.custom_field_id == -1 && @webform.project.present? && @webform.tracker.present? && issue = Issue.new(project: @webform.project, tracker: @webform.tracker) %>
         <p><%= f.select :default_value, issue.assignable_users.collect{|c| [c.name, c.id]},
                         {:include_blank => true} %></p>
@@ -27,6 +27,8 @@
                         {:include_blank => true} %></p>
       <% elsif wcfv.custom_field_id == -6 %>
         <p><%= f.select :default_value, (@priorities.collect{|c| [c.name, c.id]}) %></p>
+      <% elsif wcfv.custom_field_id == -7 %>
+        <p><%= f.number_field :default_value, :size => 80, :maxlength => 255, :label => :field_value %></p>
       <% elsif wcfv.custom_field.present? && default_value = Issue.new(:project_id => @webform.project_id, :tracker_id => @webform.tracker_id).editable_custom_field_values.group_by{|x| x.custom_field_id}[wcfv.custom_field_id] %>
         <p><%= f.label :default_value %><%= custom_field_tag(:custom_field, wcfv).
           gsub(/ name="(.+?)"/, ' name="webform_custom_field_values[default_value]"').html_safe %></p>
