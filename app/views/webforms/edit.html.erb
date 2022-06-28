@@ -1,5 +1,9 @@
 <%= title [l(:label_webform_plural), webforms_path], l(:label_webform_new) %>
 
+<% content_for :header_tags do -%>
+<%= stylesheet_link_tag "web_forms.css", :plugin => :redmine_web_forms %>
+<% end -%>
+
 <%= labelled_form_for @webform do |f| %>
   <%= render :partial => 'form', :locals => {:f => f} %>
   <%= submit_tag l(:button_save), :onclick => "number_list();" %>
