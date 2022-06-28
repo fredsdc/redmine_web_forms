@@ -3,6 +3,10 @@
 <%= error_messages_for 'webform' %>
 <%= error_messages_for 'issue' %>
 
+<% content_for :header_tags do -%>
+  <%= stylesheet_link_tag "web_forms.css", :plugin => :redmine_web_forms %>
+<% end -%>
+
 <% if @webform.description.present? %>
   <div class="wiki">
     <%= textilizable @webform.description %>
