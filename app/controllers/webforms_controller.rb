@@ -84,17 +84,24 @@ class WebformsController < ApplicationController
     @webform = find_webform_by_identifier
     @priorities = IssuePriority.active
 
-    if @webform.validate_webform
-      @issue = Issue.new(project: @webform.project, tracker:@webform.tracker, author:User.current)
-      # Proceed if there are no invalid custom fields
-      return true if (
-        @webform.webform_custom_field_values.map(&:custom_field_id) +
-        @webform.questions.map(&:custom_field_id) -
-        @issue.custom_field_values.map(&:custom_field_id)
-      ).select{|i| i.to_i > 0}.empty?
+    @issue = Issue.new(project: @webform.project, tracker:@webform.tracker, author:User.current)
+    # Proceed if there are no invalid custom fields
+    icfs = (
+      @webform.webform_custom_field_values.map(&:custom_field_id) +
+      @webform.questions.map(&:custom_field_id) -
+      @issue.custom_field_values.map(&:custom_field_id)
+    ).select{|i| i.to_i > 0}
+
+    return true if @webform.validate_webform && icfs.empty?
+
+    errors = [l(:error_webform_in_maintenance)]
+
+    if User.current.admin?
+      errors += @webform.validate_webform_errors(user=User.current)
+      errors += [l(:error_webform_invalid_cfs, :icfs => icfs.join(', '))] if icfs.present?
     end
 
-    render_error :message => l(:error_webform_in_maintenance), :status => 403
+    render_error :message => errors.join(', '), :status => 403
     return false
   end
 

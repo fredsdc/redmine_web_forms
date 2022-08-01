@@ -2,6 +2,13 @@ pt-BR:
   error_webform_in_maintenance: Este formulário está em manutenção
   error_invalid_custom_field: Campo personalizado inválido
   error_repeated_identifiers: "tem identificadores repetidos: %{identifiers}"
+  error_webform_no_project: projeto não selecionado
+  error_webform_no_tracker: tipo de tarefa não selecionado
+  error_webform_no_tracker_in_project: projeto selecionado não usa o tipo de tarefa selecionado
+  error_webform_no_issue_status: situação da tarefa não selecionada
+  error_webform_no_workflow: sem fluxo de trabalho para situação da tarefa selecionada
+  error_webform_roles_cant_add_issue: papéis do usuário não podem criar tarefas
+  error_webform_invalid_cfs: "campos customizados inválidos no formulário: %{icfs}"
   label_webform_new: Novo formulário
   label_webform_plural: Formulários
   label_adds_user: Inclui usuário

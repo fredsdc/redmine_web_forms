@@ -4,6 +4,13 @@ en:
   error_webform_in_maintenance: This form is offline for maintenance
   error_invalid_custom_field: Custom Field is invalid
   error_repeated_identifiers: "has repeated identifiers: %{identifiers}"
+  error_webform_no_project: project not selected
+  error_webform_no_tracker: tracker not selected
+  error_webform_no_tracker_in_project: selected project does not use selected tracker
+  error_webform_no_issue_status: issue status not selected
+  error_webform_no_workflow: no workflow to selected initial status
+  error_webform_roles_cant_add_issue: user roles canot add issues
+  error_webform_invalid_cfs: "webform custom fields are invalid: %{icfs}"
   label_webform_new: New webform
   label_webform_plural: Webforms
   label_adds_user: Adds user

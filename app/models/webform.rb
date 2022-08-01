@@ -65,6 +65,23 @@ class Webform < ActiveRecord::Base
     ).map{|w| w.new_status_id}.include?(self.issue_status_id)
   end
 
+  def validate_webform_errors(user=User.current)
+    roles = get_user_roles(user)
+
+    errors = []
+    errors += [l(:error_webform_no_project)] unless self.project.present?
+    errors += [l(:error_webform_no_tracker)] unless self.tracker.present?
+    errors += [l(:error_webform_no_tracker_in_project)] unless self.project.trackers.include?(self.tracker) if errors.empty?
+    errors += [l(:error_webform_no_issue_status)] unless self.issue_status.present?
+    errors += [l(:error_webform_no_workflow)] unless WorkflowTransition.where(
+                                                        old_status_id: 0,
+                                                        tracker_id: self.tracker_id,
+                                                        role_id: roles.map{|r| r.id}
+                                                      ).map{|w| w.new_status_id}.include?(self.issue_status_id) if errors.empty?
+    errors += [l(:error_webform_roles_cant_add_issue)] unless roles.map{|role| can_add_issue(role)}.any?
+    errors
+  end
+
   private
 
   def can_add_issue(role)
@@ -77,7 +94,7 @@ class Webform < ActiveRecord::Base
 
   def get_user_roles(user)
     (
-      if user.present?
+      if self.project.present? && user.present?
         if user.admin?
           self.project.members.map{|m| m.roles}
         else
