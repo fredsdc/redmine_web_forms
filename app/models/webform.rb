@@ -48,7 +48,9 @@ class Webform < ActiveRecord::Base
     'issue_status_id',
     'questions',
     'webform_custom_field_values',
-    'identifier')
+    'identifier',
+    'allow_attachments'
+  )
 
   def validate_webform(user=User.current)
     roles = get_user_roles(user)

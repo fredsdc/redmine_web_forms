@@ -93,5 +93,10 @@
       <% end %>
     </div>
   <% end %>
+  <% if @webform.allow_attachments %>
+    <div class="box filedroplistener">
+      <p id="attachments_form"><label><%= l(:label_attachment_plural) %></label><%= render :partial => 'attachments/form', :locals => {:container => @issue} %></p>
+    </div>
+  <% end %>
   <%= submit_tag l(:button_save) %>
 <% end %>
