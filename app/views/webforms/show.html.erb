@@ -55,11 +55,12 @@
                           {:include_blank => true, :label => "", :required => @issue.required_attribute?('category_id')},
                           {:id => q.identifier, :onchange => q.onchange} %></p>
         <% elsif q.custom_field_id == -3 && @issue.safe_attribute?('description') %>
+          <% id = q.identifier.present? ? q.identifier : 'issue_description' %>
           <p><%= q.description %></p>
           <p><%= f.text_area :description, :cols => 60, :accesskey => accesskey(:edit), :class => 'wiki-edit',
                              :rows => [[10, @issue.description.to_s.length / 50].max, 20].min,
-                             :no_label => true, :id => q.identifier, :onchange => q.onchange %></p>
-          <%= wikitoolbar_for 'issue_description', preview_issue_path(:project_id => @issue.project, :issue_id => @issue.id) %>
+                             :no_label => true, :id => id, :onchange => q.onchange %></p>
+          <%= wikitoolbar_for id, preview_issue_path(:project_id => @issue.project, :issue_id => @issue.id) %>
         <% elsif q.custom_field_id == -4 %>
           <p><%= q.description %></p>
           <p><%= f.text_field :subject, :size => 80, :maxlength => 255, :label => "", :id => q.identifier,
