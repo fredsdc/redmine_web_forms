@@ -49,7 +49,9 @@ class Webform < ActiveRecord::Base
     'questions',
     'webform_custom_field_values',
     'identifier',
-    'allow_attachments'
+    'allow_attachments',
+    'ready',
+    'submit'
   )
 
   def validate_webform(user=User.current)

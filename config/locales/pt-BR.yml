@@ -17,7 +17,9 @@ pt-BR:
   label_question_new: Nova questão
   label_add_user_to: Adicionar usuário como membro do projeto ou a um grupo?
   field_hidden: Esconder
-  field_onchange: Onchange
+  field_onchange: Javascript do onchange
+  field_onsubmit: Javascript do onsubmit
+  field_ready: Javascript do document ready
   field_allow_attachments: Permitir anexos
   label_default_value_unavailable: Valor padrão indisponível
   notice_no_role_for_custom_field: "Não há papéis que tratem o campo %{name}."

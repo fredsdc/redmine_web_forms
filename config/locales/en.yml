@@ -19,7 +19,9 @@ en:
   label_question_new: New Question
   label_add_user_to: Add user as a project member or to a group?
   field_hidden: Hidden
-  field_onchange: Onchange
+  field_onchange: Onchange javascript
+  field_onsubmit: Onsubmit javascript
+  field_ready: Document ready javascript
   field_allow_attachments: Allow attachments
   label_default_value_unavailable: Unavailable default value
   notice_no_role_for_custom_field: "No role for custom field %{name}."

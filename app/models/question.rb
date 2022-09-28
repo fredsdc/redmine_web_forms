@@ -37,7 +37,8 @@ class Question < ActiveRecord::Base
     'position',
     'possible_values',
     'hidden',
-    'onchange'
+    'onchange',
+    'required'
   )
 
   def possible_values
