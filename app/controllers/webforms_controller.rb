@@ -83,6 +83,7 @@ class WebformsController < ApplicationController
   def show
     @webform = find_webform_by_identifier
     @priorities = IssuePriority.active
+    @questions = map_non_cf_answers
 
     @issue = Issue.new(project: @webform.project, tracker:@webform.tracker, author:User.current)
     # Proceed if there are no invalid custom fields
@@ -133,13 +134,14 @@ class WebformsController < ApplicationController
         raise ::Unauthorized
       end
 
-      if @issue.save
+      if validate_required_questions && @issue.save
         call_hook(:controller_issues_new_after_save, { :params => params, :issue => @issue})
         render_attachment_warning_if_needed(@issue)
         flash[:notice] = l(:notice_issue_successful_create, :id => view_context.link_to("##{@issue.id}", issue_path(@issue), :title => @issue.subject))
         redirect_back_or_default issue_path(@issue)
         return
       else
+        @questions = map_non_cf_answers
         render :action => 'show'
       end
     end
@@ -262,7 +264,7 @@ class WebformsController < ApplicationController
       end
     end
     if @issue.attachments_addable?(@user) && @webform.allow_attachments
-      @issue.save_attachments(params[:attachments].except("dummy") || (params[:issue] && params[:issue][:uploads]))
+      @issue.save_attachments(params[:attachments]&.except("dummy") || (params[:issue] && params[:issue][:uploads]))
     end
     @issue.safe_attributes = attrs
   end
@@ -303,5 +305,41 @@ class WebformsController < ApplicationController
     if warnings.present?
       flash[:warning] = flash[:warning].present? ? ([ flash[:warning] ] + warnings).join(" ") : warnings.join(" ")
     end
+  end
+
+  def validate_required_questions
+    @webform.questions.where(required: true).each do |q|
+      param_attrs_w = (params[:issue] || {}).deep_dup
+      param_attrs_q = (params[:questions] || {}).deep_dup
+      if q.custom_field_id.present?
+        case q.custom_field_id
+        when -1; question_error(q) unless param_attrs_w["assigned_to_id"].present?
+        when -2; question_error(q) unless param_attrs_w["category_id"].present?
+        when -3; question_error(q) unless param_attrs_w["description"].present?
+        when -4; question_error(q) unless param_attrs_w["subject"].present?
+        when -5; question_error(q) unless param_attrs_w["fixed_version_id"].present?
+        when -6; question_error(q) unless param_attrs_w["priority_id"].present?
+        when -7; question_error(q) unless param_attrs_w["parent_id"].present?
+        else;    question_error(q) unless param_attrs_w["custom_field_values"].present? && param_attrs_w["custom_field_values"][q.custom_field_id.to_s].present?
+        end
+      else
+        question_error(q) unless q.possible_values.include?(param_attrs_q[q.id.to_s])
+      end
+    end
+    if @webform.errors.any?
+      @issue.valid?
+      return false
+    else
+      return true
+    end
+  end
+
+  def map_non_cf_answers
+    param_attrs_q = (params[:questions] || {}).deep_dup
+    @webform.questions.select{|q| ! q.custom_field_id.present?}.map{|q| [q.id, param_attrs_q[q.id.to_s] || '']}.to_h
+  end
+
+  def question_error(q)
+    @webform.errors.add :base, q.description + " " + ::I18n.t('activerecord.errors.messages.blank')
   end
 end

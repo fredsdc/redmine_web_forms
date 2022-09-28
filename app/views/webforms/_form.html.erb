@@ -1,10 +1,12 @@
 <%= error_messages_for 'webform' %>
 
 <div class="box tabular">
-  <p><%= f.text_field :identifier, :required => true %></p>
   <p><%= f.text_field :title, :required => true %></p>
-  <p><%= f.text_area :description, :rows => 8, :class => 'wiki-edit' %></p>
+  <p><%= f.text_area :description, :rows => 8, :class => 'wiki-edit', :label => l(:label_string) %></p>
   <%= wikitoolbar_for 'webform_description' %>
+  <p><%= f.text_field :identifier, :required => true %></p>
+  <p><%= f.text_area :ready, :rows => 4, :label =>  l(:field_ready) + " (" + l(:label_optional) + ")" %></p>
+  <p><%= f.text_area :submit, :rows => 4, :label =>  l(:field_onsubmit) + " (" + l(:label_optional) + ")" %></p>
   <fieldset id="webform_options">
     <%= render :partial => 'options' %>
   </fieldset>

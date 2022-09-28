@@ -1,9 +1,9 @@
 <fieldset>
   <%= labelled_fields_for :questions, q do |f| %>
     <legend><%= l(:label_question) %> <span class="number"><%= n %></span> <img class="delete icon-only icon-del" title="<%= l(:button_delete) %>" onclick="$(this).parent().parent().remove(); renumber_list();"/></legend>
-    <p><%= f.text_area :description, :rows => 3, :class => 'wiki-edit' %></p>
     <div class="splitcontent">
       <div class="splitcontentleft">
+        <p><%= f.text_area :description, :rows => 3, :class => 'wiki-edit', :label => l(:label_string) %></p>
         <p><%= f.select :custom_field_id, options_for_select(@custom_fields, :selected => q.custom_field_id), {:include_blank => true, :label => :label_custom_field},
                        {:onchange => "if($(this).val()==''){$(this).parent().next().find('textarea').prop('disabled',false)}else{$(this).parent().next().find('textarea').prop('disabled',true)}"} %></p>
         <p>
@@ -15,6 +15,7 @@
         <p><%= f.text_field :identifier %></p>
         <p><%= f.text_area :onchange, :cols => 60, :rows => 4, :label =>  l(:field_onchange) + " (" + l(:label_optional) + ")" %></p>
         <p><%= f.check_box :hidden %></p>
+        <p><%= f.check_box :required, :label =>  l(:label_required) %></p>
       </div>
     </div>
   <% end %>
