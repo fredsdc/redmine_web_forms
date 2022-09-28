@@ -36,6 +36,12 @@ It creates a new entry in the admin menu to manage webforms.
 
   $('#<identifier>').val()
 
+1. If you would like to address the user in your scripts there are some hidden user fields you can use. Their ids are:
+
+  * author_name for the full name
+  * author_mail for the main email
+  * author_cf_<number> for the user custom fields
+
 1. To hide/show and element, refer to its closest '.box':
 
   $('#<identifier>').closest('.box')
@@ -63,6 +69,8 @@ It creates a new entry in the admin menu to manage webforms.
 1. Enter Identifier (name that goes in the URL), Title and Description (the form headers)
 
 1. When an user answers the form, Redmine will create an issue. In Options, enter its Project, Tracker and Status
+
+1. You may fill javascript to be executed when document is ready, and before submit
 
 1. The form will be "In maintenance" if the user doesn't have permission to create it. Optionally, in "Add user..." you can give him a role in the project or put him in a group
 
@@ -93,6 +101,8 @@ It creates a new entry in the admin menu to manage webforms.
   1. On onchange, enter the javascript to be executed when the value of this question changes
 
   1. Check Hidden if this question will initially appear hidden (can be shown using javascript)
+
+  1. Check Required accordingly (note: hidden questions should not be required, it may block submit)
 
 Add as many custom fields and questions as needed. You can drag them around to change their order.
 
