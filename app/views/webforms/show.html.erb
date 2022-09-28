@@ -103,6 +103,6 @@
   <%= submit_tag l(:button_save) %>
 <% end %>
 <%= javascript_tag do %>
-$(document).ready(function() {<%= @webform.ready.html_safe %>});
-$('#new_issue').submit(function() {<%= @webform.submit.html_safe %>});
+$(document).ready(function() {<%= @webform.ready&.html_safe %>});
+$('#new_issue').submit(function() {<%= @webform.submit&.html_safe %>});
 <% end %>
