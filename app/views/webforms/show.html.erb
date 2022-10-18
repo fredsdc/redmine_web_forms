@@ -18,7 +18,7 @@
   <%= f.hidden_field :author, {:value => @issue.author.name, :id => 'author_name', :name => ''  } %>
   <%= f.hidden_field :mail, {:value => @issue.author.mail, :id => 'author_mail', :name => ''  } %>
   <% @issue.author.custom_values.each do |c| %>
-    <%= f.hidden_field c, {:value => c.value, :id => 'author_cf_' + c.custom_field.id, :name => ''  } %>
+    <%= f.hidden_field c, {:value => c.value, :id => 'author_cf_' + c.custom_field.id.to_s, :name => ''  } %>
   <% end %>
   <% @webform.webform_custom_field_values.each do |w| %>
     <% if w.custom_field.present? || [-1,-2,-3,-4,-5,-6,-7].include?(w.custom_field_id) %>
