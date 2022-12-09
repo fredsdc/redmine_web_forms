@@ -1,4 +1,4 @@
-<%= title [l(:label_webform_plural), webforms_path], l(:label_webform_new) %>
+<%= title [l(:label_webform_plural), webforms_path], @webform.title %>
 
 <% content_for :header_tags do -%>
 <%= stylesheet_link_tag "web_forms.css", :plugin => :redmine_web_forms %>
