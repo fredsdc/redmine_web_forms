@@ -6,9 +6,9 @@ pt-BR:
   error_webform_no_tracker: tipo de tarefa não selecionado
   error_webform_no_tracker_in_project: projeto selecionado não usa o tipo de tarefa selecionado
   error_webform_no_issue_status: situação da tarefa não selecionada
-  error_webform_no_workflow: sem fluxo de trabalho para situação da tarefa selecionada
+  error_webform_no_workflow: sem fluxo de trabalho para criar a tarefa
   error_webform_roles_cant_add_issue: papéis do usuário não podem criar tarefas
-  error_webform_invalid_cfs: "campos customizados inválidos no formulário: %{icfs}"
+  error_webform_invalid_fs: "campos customizados inválidos no formulário: %{ifs}"
   label_webform_new: Novo formulário
   label_webform_plural: Formulários
   label_adds_user: Inclui usuário
@@ -22,5 +22,5 @@ pt-BR:
   field_ready: Javascript do document ready
   field_allow_attachments: Permitir anexos
   label_default_value_unavailable: Valor padrão indisponível
-  notice_no_role_for_custom_field: "Não há papéis que tratem o campo %{name}."
+  notice_no_role_for_custom_field: "Não há papéis que tratem os campos: %{ifs}."
   notice_skip_custom_field_verification: "Pular verificação de campo customizado: sem projeto, tipo de tarefa ou status."

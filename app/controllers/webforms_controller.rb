@@ -34,6 +34,10 @@ class WebformsController < ApplicationController
     @webform = find_webform
     default_parameters
     get_variables_from_webform
+    errors = @webform.validate_webform_errors(user=nil).join(" ")
+    flash.now[:error] = errors if errors.present?
+    warnings = webform_custom_field_warnings.join(" ")
+    flash.now[:warning] = warnings if warnings.present?
   end
 
   def create
@@ -42,7 +46,10 @@ class WebformsController < ApplicationController
 
     if @webform.save
       flash[:notice] = l(:notice_successful_create)
-      webform_custom_field_warnings
+      errors = @webform.validate_webform_errors(user=nil).join(" ")
+      flash[:error] = errors if errors.present?
+      warnings = webform_custom_field_warnings.join(" ")
+      flash[:warning] = warnings if warnings.present?
       respond_to do |format|
         format.html { redirect_back_or_default webforms_path }
       end
@@ -63,7 +70,10 @@ class WebformsController < ApplicationController
 
       if @webform.save
         flash[:notice] = l(:notice_successful_update)
-        webform_custom_field_warnings
+        errors = @webform.validate_webform_errors(user=nil).join(" ")
+        flash[:error] = errors if errors.present?
+        warnings = webform_custom_field_warnings.join(" ")
+        flash[:warning] = warnings if warnings.present?
         respond_to do |format|
           format.html { redirect_back_or_default webforms_path }
         end
@@ -87,19 +97,19 @@ class WebformsController < ApplicationController
 
     @issue = Issue.new(project: @webform.project, tracker:@webform.tracker, author:User.current)
     # Proceed if there are no invalid custom fields
-    icfs = (
+    ifs = (
       @webform.webform_custom_field_values.map(&:custom_field_id) +
       @webform.questions.map(&:custom_field_id) -
       @issue.custom_field_values.map(&:custom_field_id)
     ).select{|i| i.to_i > 0}
 
-    return true if @webform.validate_webform && icfs.empty?
+    return true if @webform.validate_webform && ifs.empty?
 
     errors = [l(:error_webform_in_maintenance)]
 
     if User.current.admin?
       errors += @webform.validate_webform_errors(user=User.current)
-      errors += [l(:error_webform_invalid_cfs, :icfs => icfs.join(', '))] if icfs.present?
+      errors += [l(:error_webform_invalid_fs, :ifs => ifs.join(', '))] if ifs.present?
     end
 
     render_error :message => errors.join(', '), :status => 403
@@ -287,23 +297,10 @@ class WebformsController < ApplicationController
   end
 
   def webform_custom_field_warnings
-    warnings=[]
     if @webform.project.present? && @webform.tracker.present? && @webform.issue_status.present?
-      roles = (Member.where(user_id: @webform.group_id, project_id: @webform.project_id).map{|m| m.roles.ids}.flatten |
-        [@webform.role_id] - [nil]).presence || [1]
-
-      @webform.questions.select{|x| x.custom_field.present?}.map{|x| x.custom_field}.each do |cf|
-        unless cf.visible? || (roles & cf.roles.ids - WorkflowPermission.where(tracker_id: @webform.tracker_id,
-               old_status_id: @webform.issue_status_id, workspace_id: @webform.project.workspace_id, field_name: cf.id.to_s,
-               rule: "readonly").pluck(:role_id)).any?
-          warnings += [l(:notice_no_role_for_custom_field, :name => cf.name)]
-        end
-      end
+      warnings = @webform.validate_webform_fs_errors
     else
-      warnings += [l(:notice_skip_custom_field_verification)]
-    end
-    if warnings.present?
-      flash[:warning] = flash[:warning].present? ? ([ flash[:warning] ] + warnings).join(" ") : warnings.join(" ")
+      warnings = [l(:notice_skip_custom_field_verification)]
     end
   end
 

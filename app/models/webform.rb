@@ -100,6 +100,11 @@ class Webform < ActiveRecord::Base
     }.any?
   end
 
+  def validate_webform_fs_errors
+    ufs = find_unavailable_fs
+    ufs.present? ? [l(:notice_no_role_for_custom_field, :ifs => ufs)] : []
+  end
+
   private
 
   def can_add_issue(role)
@@ -135,6 +140,71 @@ class Webform < ActiveRecord::Base
 
     if rep_str.present?
       errors.add(:webform, l(:error_repeated_identifiers, :identifiers => rep_str))
+    end
+  end
+
+  def find_unavailable_fs
+    roles = (Member.where(user_id: self.group_id, project_id: self.project_id).map{|m| m.roles.ids}.flatten | [self.role_id]).compact.presence
+    if roles.present?
+      # Fields on webform
+      fs = (
+        self.webform_custom_field_values.map(&:custom_field_id) +
+        self.questions.map(&:custom_field_id)
+      ).compact.uniq
+
+      # Available fields on project
+      afs = self.tracker.custom_field_ids & self.project.issue_custom_field_ids &
+        (CustomField.find(fs.select{|i| i.to_i > 0}).select(&:visible).pluck(:id) |
+         CustomField.find(fs.select{|i| i.to_i > 0}).select{|cf| (cf.role_ids & roles).any?}.pluck(:id))
+
+      # Read only custom fields on project
+      rofs = WorkflowPermission.where(
+               tracker_id: self.tracker_id,
+               role_id: roles,
+               workspace_id: self.project.workspace_id,
+               old_status_id: self.issue_status_id,
+               rule: "readonly").pluck(:field_name,:role_id
+             ).reduce({}){|h, (k, v)| nk=cf_name_to_index(k); (h[nk] ||= []) << v; h}.reject{|k| k.nil?}
+
+      fs.map do |cf|
+        if ((cf > 0) & ! afs.include?(cf)) | (rofs[cf].present? && (roles - rofs[cf]).empty?)
+          cf > 0 ? "#{cf_index_to_name(cf)} (#{cf})" : "#{l("field_" + cf_index_to_name(cf).gsub(/_id$/, ""))}"
+        end
+      end.compact.join(", ").presence
+    end
+  end
+
+  def cf_name_to_index(i)
+    if i.to_i == 0
+      case i
+      when "assigned_to_id"; -1
+      when "category_id"; -2
+      when "description"; -3
+      when "subject"; -4
+      when "fixed_version_id"; -5
+      when "priority_id"; -6
+      when "parent_id"; -7
+      else;    nil
+      end
+    else
+      i.to_i
+    end
+  end
+
+  def cf_index_to_name(i)
+    if i < 0
+      case i
+      when -1; "assigned_to_id"
+      when -2; "category_id"
+      when -3; "description"
+      when -4; "subject"
+      when -5; "fixed_version_id"
+      when -6; "priority_id"
+      when -7; "parent_id"
+      else;    nil
+      end
+    else
+      CustomField.find(i).name
     end
   end
 end
