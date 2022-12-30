@@ -20,6 +20,7 @@ pt-BR:
   field_onchange: Javascript do onchange
   field_onsubmit: Javascript do onsubmit
   field_ready: Javascript do document ready
+  field_functions: Funções Javascript
   field_allow_attachments: Permitir anexos
   label_default_value_unavailable: Valor padrão indisponível
   notice_no_role_for_custom_field: "Não há papéis que tratem os campos: %{ifs}."

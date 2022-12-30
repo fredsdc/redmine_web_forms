@@ -51,7 +51,8 @@ class Webform < ActiveRecord::Base
     'identifier',
     'allow_attachments',
     'ready',
-    'submit'
+    'submit',
+    'functions'
   )
 
   def validate_webform(user=User.current)

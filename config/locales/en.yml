@@ -22,6 +22,7 @@ en:
   field_onchange: Onchange javascript
   field_onsubmit: Onsubmit javascript
   field_ready: Document ready javascript
+  field_functions: Javascript functions
   field_allow_attachments: Allow attachments
   label_default_value_unavailable: Unavailable default value
   notice_no_role_for_custom_field: "No role for custom fields: %{ifs}."
