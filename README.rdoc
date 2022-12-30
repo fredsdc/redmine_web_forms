@@ -70,6 +70,8 @@ It creates a new entry in the admin menu to manage webforms.
 
 1. When an user answers the form, Redmine will create an issue. In Options, enter its Project, Tracker and Status
 
+1. You may fill javascript functions to be added to the javascript section of the page
+
 1. You may fill javascript to be executed when document is ready, and before submit
 
 1. The form will be "In maintenance" if the user doesn't have permission to create it. Optionally, in "Add user..." you can give him a role in the project or put him in a group
