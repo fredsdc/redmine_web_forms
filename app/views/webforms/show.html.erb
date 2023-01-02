@@ -78,6 +78,7 @@
         <% elsif (@issue.safe_attribute? 'custom_field_values') && q.custom_field.present? %>
           <% id = q.identifier.present? ? q.identifier : custom_field_tag_id(:issue, q.custom_field) %>
           <% values[q.custom_field_id].custom_field.is_required |= q.required %>
+          <% values[q.custom_field_id].custom_field.name = q.description if q.description.present? %>
           <p><%= custom_field_tag_with_label(:issue, values[q.custom_field_id]).
             gsub(/ id="(.+?)"/, ' id="' + id + '" onchange="' + q.onchange + '"' ).html_safe %></p>
           <%= wikitoolbar_for id if q.custom_field.present? && q.custom_field.full_text_formatting? %>
