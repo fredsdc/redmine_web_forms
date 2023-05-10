@@ -93,13 +93,13 @@ class WebformsController < ApplicationController
   def show
     @webform = find_webform_by_identifier
     @priorities = IssuePriority.active
-    @questions = map_non_cf_answers
+    @webform_questions = map_non_cf_answers
 
     @issue = Issue.new(project: @webform.project, tracker:@webform.tracker, author:User.current)
     # Proceed if there are no invalid custom fields
     ifs = (
       @webform.webform_custom_field_values.map(&:custom_field_id) +
-      @webform.questions.map(&:custom_field_id) -
+      @webform.webform_questions.map(&:custom_field_id) -
       @issue.custom_field_values.map(&:custom_field_id)
     ).select{|i| i.to_i > 0}
 
@@ -144,14 +144,14 @@ class WebformsController < ApplicationController
         raise ::Unauthorized
       end
 
-      if validate_required_questions && @issue.save
+      if validate_required_webform_questions && @issue.save
         call_hook(:controller_issues_new_after_save, { :params => params, :issue => @issue})
         render_attachment_warning_if_needed(@issue)
         flash[:notice] = l(:notice_issue_successful_create, :id => view_context.link_to("##{@issue.id}", issue_path(@issue), :title => @issue.subject))
         redirect_back_or_default issue_path(@issue)
         return
       else
-        @questions = map_non_cf_answers
+        @webform_questions = map_non_cf_answers
         render :action => 'show'
       end
     end
@@ -260,7 +260,7 @@ class WebformsController < ApplicationController
     param_attrs = (params[:issue] || {}).deep_dup
 
     attrs = {"custom_field_values"=>{}}
-    @webform.questions.map{|x| x.custom_field_id.to_i}.select{|x| x != 0}.each do |x|
+    @webform.webform_questions.map{|x| x.custom_field_id.to_i}.select{|x| x != 0}.each do |x|
       case x
       when -1; attrs["assigned_to_id"]=param_attrs["assigned_to_id"]
       when -2; attrs["category_id"]=param_attrs["category_id"]
@@ -282,10 +282,10 @@ class WebformsController < ApplicationController
     param_attrs = (params[:webform] || {}).deep_dup
     @webform.safe_attributes = param_attrs
 
-    param_attrs = (params[:questions] || {}).deep_dup
-    @webform.questions=[]
+    param_attrs = (params[:webform_questions] || {}).deep_dup
+    @webform.webform_questions=[]
     param_attrs.values.each do |q|
-      @webform.questions.new.safe_attributes = q
+      @webform.webform_questions.new.safe_attributes = q
     end
 
     param_attrs = (params[:webform_custom_field_values] || {}).deep_dup
@@ -303,26 +303,26 @@ class WebformsController < ApplicationController
     end
   end
 
-  def validate_required_questions
-    @webform.questions.where(required: true).each do |q|
+  def validate_required_webform_questions
+    @webform.webform_questions.where(required: true).each do |q|
       param_attrs_w = (params[:issue] || {}).deep_dup
-      param_attrs_q = (params[:questions] || {}).deep_dup
+      param_attrs_q = (params[:webform_questions] || {}).deep_dup
       if q.custom_field_id.present?
         case q.custom_field_id
-        when -1; question_error(q) unless param_attrs_w["assigned_to_id"].present?
-        when -2; question_error(q) unless param_attrs_w["category_id"].present?
-        when -3; question_error(q) unless param_attrs_w["description"].present?
-        when -4; question_error(q) unless param_attrs_w["subject"].present?
-        when -5; question_error(q) unless param_attrs_w["fixed_version_id"].present?
-        when -6; question_error(q) unless param_attrs_w["priority_id"].present?
-        when -7; question_error(q) unless param_attrs_w["parent_id"].present?
-        else;    question_error(q) unless param_attrs_w["custom_field_values"].present? && param_attrs_w["custom_field_values"][q.custom_field_id.to_s].present?
+        when -1; webform_question_error(q) unless param_attrs_w["assigned_to_id"].present?
+        when -2; webform_question_error(q) unless param_attrs_w["category_id"].present?
+        when -3; webform_question_error(q) unless param_attrs_w["description"].present?
+        when -4; webform_question_error(q) unless param_attrs_w["subject"].present?
+        when -5; webform_question_error(q) unless param_attrs_w["fixed_version_id"].present?
+        when -6; webform_question_error(q) unless param_attrs_w["priority_id"].present?
+        when -7; webform_question_error(q) unless param_attrs_w["parent_id"].present?
+        else;    webform_question_error(q) unless param_attrs_w["custom_field_values"].present? && param_attrs_w["custom_field_values"][q.custom_field_id.to_s].present?
         end
       else
         if q.possible_values.any?
-          question_error(q) unless q.possible_values.include?(param_attrs_q[q.id.to_s])
+          webform_question_error(q) unless q.possible_values.include?(param_attrs_q[q.id.to_s])
         else
-          question_error(q) if param_attrs_q[q.id.to_s].empty?
+          webform_question_error(q) if param_attrs_q[q.id.to_s].empty?
         end
       end
     end
@@ -335,11 +335,11 @@ class WebformsController < ApplicationController
   end
 
   def map_non_cf_answers
-    param_attrs_q = (params[:questions] || {}).deep_dup
-    @webform.questions.select{|q| ! q.custom_field_id.present?}.map{|q| [q.id, param_attrs_q[q.id.to_s] || '']}.to_h
+    param_attrs_q = (params[:webform_questions] || {}).deep_dup
+    @webform.webform_questions.select{|q| ! q.custom_field_id.present?}.map{|q| [q.id, param_attrs_q[q.id.to_s] || '']}.to_h
   end
 
-  def question_error(q)
+  def webform_question_error(q)
     @webform.errors.add :base, q.description + " " + ::I18n.t('activerecord.errors.messages.blank')
   end
 end

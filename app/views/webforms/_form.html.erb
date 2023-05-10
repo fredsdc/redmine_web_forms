@@ -26,20 +26,20 @@
   <%= link_to l(:label_custom_field_new), "", :class => 'icon icon-add', :onclick => 'addCustomField(); renumber_list(".webform_custom_field_values"); updateWebformCustomField($(".webform_custom_field_values select").last()); return false;' %>
 </div>
 
-<div class="box tabular sortable_questions">
+<div class="box tabular sortable_webform_questions">
   <% n = 1 %>
-  <div id="questions">
-    <% @webform.questions.each do |q| %>
-      <%= render :partial => 'question', :locals => {:q => q, :n => n} %>
+  <div id="webform_questions">
+    <% @webform.webform_questions.each do |q| %>
+      <%= render :partial => 'webform_question', :locals => {:q => q, :n => n} %>
       <% n += 1 %>
     <% end %>
   </div>
-  <%= link_to l(:label_question_new), "", :class => 'icon icon-add', :onclick => 'addQuestion(); renumber_list(".sortable_questions"); updateFields(); return false;' %>
+  <%= link_to l(:label_webform_question_new), "", :class => 'icon icon-add', :onclick => 'addWebformQuestion(); renumber_list(".sortable_webform_questions"); updateFields(); return false;' %>
 </div>
 
 <%= javascript_tag do %>
-  function addQuestion() {
-    $("<%= escape_javascript render :partial => 'question', :locals => {:q => Question.new, :n => n} %>").appendTo('#questions')
+  function addWebformQuestion() {
+    $("<%= escape_javascript render :partial => 'webform_question', :locals => {:q => WebformQuestion.new, :n => n} %>").appendTo('#webform_questions')
   };
 
   function addCustomField() {
@@ -66,13 +66,13 @@
     });
   }
 
-  $('.sortable_questions').sortable({
+  $('.sortable_webform_questions').sortable({
     items:'fieldset',
     start: function(event, ui) {
       ui.placeholder.height(ui.item.height())
     },
     stop: function(event, ui) {
-      renumber_list('.sortable_questions')
+      renumber_list('.sortable_webform_questions')
     }
   });
 
@@ -93,10 +93,10 @@
   }
 
   function number_list() {
-    $("#questions fieldset").each(function(index) {
-      prefix = "questions[" + index + "]";
+    $("#webform_questions fieldset").each(function(index) {
+      prefix = "webform_questions[" + index + "]";
       $(this).find('[name]').each(function(){
-        this.name = this.name.replace(/questions/, prefix);
+        this.name = this.name.replace(/webform_questions/, prefix);
       })
     });
     $("#custom_fields fieldset").each(function(index) {

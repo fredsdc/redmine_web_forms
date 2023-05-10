@@ -44,7 +44,7 @@
     <% end %>
   <% end %>
 
-  <% @webform.questions.each do |q| %>
+  <% @webform.webform_questions.each do |q| %>
     <div class="box" <%= q.hidden? ? 'style="display: none;"'.html_safe : '' %>>
       <% if q.custom_field.present? || [-1,-2,-3,-4,-5,-6,-7].include?(q.custom_field_id) # assigned_to %>
         <% if q.custom_field_id == -1 && @issue.safe_attribute?('assigned_to_id') %>
@@ -87,11 +87,11 @@
         <p><%= q.description %><%= q.required ? " <span class=\"required\">*</span>".html_safe : "" %></p>
         <% if q.possible_values.present? %>
           <p><%= select_tag '',
-                   options_for_select(q.possible_values.insert(0, q.required ? "--- #{l(:actionview_instancetag_blank_option)} ---" : ''), @questions[q.id]),
-                   :id => q.identifier, :onchange => q.onchange, :required => q.required, :name => "questions[#{q.id}]" %></p>
+                   options_for_select(q.possible_values.insert(0, q.required ? "--- #{l(:actionview_instancetag_blank_option)} ---" : ''), @webform_questions[q.id]),
+                   :id => q.identifier, :onchange => q.onchange, :required => q.required, :name => "webform_questions[#{q.id}]" %></p>
         <% else %>
-          <p><%= text_area_tag '', @questions[q.id], :id => q.identifier, :onchange => q.onchange, :cols => 60, :class => 'wiki-edit', :rows => 3,
-                   :label => q.description, :required => q.required, :name => "questions[#{q.id}]" %></p>
+          <p><%= text_area_tag '', @webform_questions[q.id], :id => q.identifier, :onchange => q.onchange, :cols => 60, :class => 'wiki-edit', :rows => 3,
+                   :label => q.description, :required => q.required, :name => "webform_questions[#{q.id}]" %></p>
         <% end %>
       <% end %>
     </div>

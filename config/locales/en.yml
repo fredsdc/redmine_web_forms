@@ -15,8 +15,8 @@ en:
   label_webform_plural: Webforms
   label_adds_user: Adds user
   label_optional: optional
-  label_question: Question
-  label_question_new: New Question
+  label_webform_question: Question
+  label_webform_question_new: New Question
   label_add_user_to: Add user as a project member or to a group?
   field_hidden: Hidden
   field_onchange: Onchange javascript
