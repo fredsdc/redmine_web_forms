@@ -320,7 +320,11 @@ class WebformsController < ApplicationController
         else;    question_error(q) unless param_attrs_w["custom_field_values"].present? && param_attrs_w["custom_field_values"][q.custom_field_id.to_s].present?
         end
       else
-        question_error(q) unless q.possible_values.include?(param_attrs_q[q.id.to_s])
+        if q.possible_values.any?
+          question_error(q) unless q.possible_values.include?(param_attrs_q[q.id.to_s])
+        else
+          question_error(q) if param_attrs_q[q.id.to_s].empty?
+        end
       end
     end
     if @webform.errors.any?
