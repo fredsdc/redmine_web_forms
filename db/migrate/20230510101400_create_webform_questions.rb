@@ -15,8 +15,24 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-class AddQuestionsRequired < ActiveRecord::Migration[4.2]
-  def change
-    add_column :questions, :required, :boolean, :default => 0
+# Create table if not migrated
+class CreateWebformQuestions < ActiveRecord::Migration[5.2]
+  def self.up
+    unless ActiveRecord::Base.connection.table_exists?(:webform_questions)
+      create_table :webform_questions do |t|
+        t.integer :webform_id, :null => false
+        t.integer :custom_field_id
+        t.string :identifier
+        t.text :description
+        t.integer :position, :default => nil, :null => true
+        t.text :possible_values
+        t.boolean :hidden, :default => 0
+        t.boolean :required, :default => 0
+        t.text :onchange
+      end
+    end
+  end
+  def self.down
+    drop_table :webform_questions
   end
 end

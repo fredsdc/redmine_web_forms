@@ -13,8 +13,8 @@ pt-BR:
   label_webform_plural: Formulários
   label_adds_user: Inclui usuário
   label_optional: opcional
-  label_question: Questão
-  label_question_new: Nova questão
+  label_webform_question: Questão
+  label_webform_question_new: Nova questão
   label_add_user_to: Adicionar usuário como membro do projeto ou a um grupo?
   field_hidden: Esconder
   field_onchange: Javascript do onchange

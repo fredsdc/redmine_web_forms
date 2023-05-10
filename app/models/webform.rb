@@ -21,7 +21,7 @@ class Webform < ActiveRecord::Base
   IDENTIFIER_MAX_LENGTH = 100
 
   has_many :webform_custom_field_values, -> {order(:position)}, :dependent => :delete_all
-  has_many :questions, -> {order(:position)}, :dependent => :delete_all
+  has_many :webform_questions, -> {order(:position)}, :dependent => :delete_all
 
   belongs_to :project
   belongs_to :tracker
@@ -36,7 +36,7 @@ class Webform < ActiveRecord::Base
   validates_format_of :identifier, :with => /\A(?!\d+$)[a-z0-9\-_]*\z/, :if => Proc.new { |p| p.identifier_changed? }
   # reserved words
   validates_exclusion_of :identifier, :in => %w( new update_selects update_custom_field )
-  validate :question_identifier_uniqueness
+  validate :webform_question_identifier_uniqueness
 
   safe_attributes(
     'title',
@@ -46,7 +46,7 @@ class Webform < ActiveRecord::Base
     'group_id',
     'role_id',
     'issue_status_id',
-    'questions',
+    'webform_questions',
     'webform_custom_field_values',
     'identifier',
     'allow_attachments',
@@ -132,9 +132,9 @@ class Webform < ActiveRecord::Base
     ).flatten.uniq
   end
 
-  def question_identifier_uniqueness
+  def webform_question_identifier_uniqueness
     rep_str = (
-      questions.map{|x| x.identifier} +
+      webform_questions.map{|x| x.identifier} +
       webform_custom_field_values.map{|x| x.identifier} -
       ["", nil]
     ).group_by{ |e| e }.select { |k, v| v.size > 1 }.keys.join(", ")
@@ -150,7 +150,7 @@ class Webform < ActiveRecord::Base
       # Fields on webform
       fs = (
         self.webform_custom_field_values.map(&:custom_field_id) +
-        self.questions.map(&:custom_field_id)
+        self.webform_questions.map(&:custom_field_id)
       ).compact.uniq
 
       # Available fields on project

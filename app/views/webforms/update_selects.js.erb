@@ -1,6 +1,6 @@
 $('#webform_options').html('<%= escape_javascript(render :partial => 'options') %>');
 $('#custom_fields').html('<%= escape_javascript(render :partial => 'webform_custom_field_values') %>');
-$('#questions *[id$="custom_field_id"]').each(function(){
+$('#webform_questions *[id$="custom_field_id"]').each(function(){
   value=$(this).val();
   $(this).html('<%= escape_javascript(options_for_select [""] + @custom_fields) %>').val(value);
 })
