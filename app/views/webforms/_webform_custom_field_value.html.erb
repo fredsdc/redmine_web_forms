@@ -1,6 +1,6 @@
 <fieldset>
   <%= labelled_fields_for :webform_custom_field_values, wcfv do |f| %>
-    <legend><%= l(:label_custom_field) %> <span class="number"><%= n %></span> <img class="delete icon-only icon-del" title="<%= l(:button_delete) %>" onclick="$(this).closest('fieldset').remove();"/></legend>
+    <legend><%= l(:label_custom_field) %> <span class="number"><%= n %></span> <i class="delete icon-only icon-del" title="<%= l(:button_delete) %>" onclick="$(this).closest('fieldset').remove();"/></legend>
     <div class="splitcontent">
       <div class="splitcontentleft">
         <p><%= f.select :custom_field_id, options_for_select(@custom_fields, :selected => wcfv.custom_field_id), {:include_blank => true, :label => :label_custom_field}, :onchange => 'updateWebformCustomField(this);' %></p>
