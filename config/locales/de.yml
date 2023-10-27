@@ -1,0 +1,29 @@
+# German strings go here for Rails i18n
+de:
+  # my_label: "My label"
+  error_webform_in_maintenance: Dieses Formular ist wegen Wartungsarbeiten offline
+  error_invalid_custom_field: Benutzerdefiniertes Feld ist ungültig
+  error_repeated_identifiers: "hat wiederholte Kennungen: %{identifiers}"
+  error_webform_no_project: Projekt nicht ausgewählt
+  error_webform_no_tracker: Tracker nicht ausgewählt
+  error_webform_no_tracker_in_project: Tracker in Projekt nicht verwendet
+  error_webform_no_issue_status: Ticketstatus nicht ausgewählt
+  error_webform_no_workflow: Kein Workflow zum Erstellen eines Tickets
+  error_webform_roles_cant_add_issue: Benutzerrollen können keine Tickets hinzufügen
+  error_webform_invalid_fs: "Benutzerdefinierte Felder sind ungültig: %{ifs}"
+  label_webform_new: Neues Webformular
+  label_webform_plural: Webformular
+  label_adds_user: Fügt Benutzer hinzu
+  label_optional: optional
+  label_webform_question: Frage
+  label_webform_question_new: Neue Frage
+  label_add_user_to: Benutzer als Projektmitglied oder zu einer Gruppe hinzufügen?
+  field_hidden: Versteckt
+  field_onchange: Onchange Javascript
+  field_onsubmit: Onsubmit Javascript
+  field_ready: Document ready Javascript
+  field_functions: Javascript Funktionen
+  field_allow_attachments: Anhänge erlauben
+  label_default_value_unavailable: Standardwert nicht verfügbar
+  notice_no_role_for_custom_field: "Keine Rolle für benutzerdefiniertes Feld: %{ifs}."
+  notice_skip_custom_field_verification: "Überprüfung der benutzerdefinierten Felder wird übersprungen: kein Projekt, Tracker oder Status."
