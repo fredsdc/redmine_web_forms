@@ -21,7 +21,7 @@
     <%= f.hidden_field c, {:value => c.value, :id => 'author_cf_' + c.custom_field.id.to_s, :name => ''  } %>
   <% end %>
   <% @webform.webform_custom_field_values.each do |w| %>
-    <% if w.custom_field.present? || [-1,-2,-3,-4,-5,-6,-7].include?(w.custom_field_id) %>
+    <% if w.custom_field.present? || [-1,-2,-3,-4,-5,-6,-7,-8,-9,-10].include?(w.custom_field_id) %>
       <% if w.custom_field_id == -1 && @issue.safe_attribute?('assigned_to_id') # assigned_to %>
         <%= f.hidden_field :assign_to_id, {:value => w.default_value, :id => w.identifier} %>
       <% elsif w.custom_field_id == -2 && @issue.safe_attribute?('category_id') # category %>
@@ -36,6 +36,12 @@
         <%= f.hidden_field :priority_id, {:value => w.default_value, :id => w.identifier} %>
       <% elsif w.custom_field_id == -7 && @issue.safe_attribute?('parent_id') # parent_id %>
         <%= f.hidden_field :parent_id, {:value => w.default_value, :id => w.identifier} %>
+      <% elsif w.custom_field_id == -8 && @issue.safe_attribute?('start_date') # parent_id %>
+        <%= f.hidden_field :start_date, {:value => w.default_value, :id => w.identifier} %>
+      <% elsif w.custom_field_id == -9 && @issue.safe_attribute?('due_date') # parent_id %>
+        <%= f.hidden_field :due_date, {:value => w.default_value, :id => w.identifier} %>
+      <% elsif w.custom_field_id == -10 && @issue.safe_attribute?('done_ratio') # parent_id %>
+        <%= f.hidden_field :done_ratio, {:value => w.default_value, :id => w.identifier} %>
       <% elsif @issue.safe_attribute? 'custom_field_values'  %>
         <%= hidden_field_tag "issue[custom_field_values][#{w.custom_field_id}]", w.default_value, { :id => w.identifier } if w.custom_field.present? %>
       <% end %>
@@ -46,7 +52,7 @@
 
   <% @webform.webform_questions.each do |q| %>
     <div class="box" <%= q.hidden? ? 'style="display: none;"'.html_safe : '' %>>
-      <% if q.custom_field.present? || [-1,-2,-3,-4,-5,-6,-7].include?(q.custom_field_id) # assigned_to %>
+      <% if q.custom_field.present? || [-1,-2,-3,-4,-5,-6,-7,-8,-9,-10].include?(q.custom_field_id) # assigned_to %>
         <% if q.custom_field_id == -1 && @issue.safe_attribute?('assigned_to_id') %>
           <p><%= f.select :assigned_to_id, principals_options_for_select(@issue.assignable_users, @issue.assigned_to),
                           {:include_blank => true, :label => q.description, :required => @issue.required_attribute?('assigned_to_id') || q.required},
@@ -75,6 +81,16 @@
         <% elsif q.custom_field_id == -7 # parent_id %>
           <p><%= f.number_field :parent_id, :size => 80, :maxlength => 255, :label => q.description, :id => q.identifier,
                               :onchange => q.onchange %></p>
+        <% elsif q.custom_field_id == -8 # start_date %>
+          <p><%= f.date_field :start_date, :size => 10, :label => q.description, :required => @issue.required_attribute?('start_date') || q.required,
+                              :id => q.identifier, :onchange => q.onchange %></p>
+        <% elsif q.custom_field_id == -9 # due_date %>
+          <p><%= f.date_field :due_date, :size => 10, :label => q.description, :required => @issue.required_attribute?('due_date') || q.required,
+                              :id => q.identifier, :onchange => q.onchange %></p>
+        <% elsif q.custom_field_id == -10 # done_ratio %>
+          <p><%= f.select :done_ratio, ((0..10).to_a.collect {|r| ["#{r*10} %", r*10] }),
+                          {:label => q.description, :include_blank => true, :required => @issue.required_attribute?('done_ratio')  || q.required},
+                          {:id => q.identifier, :onchange => q.onchange} %></p>
         <% elsif (@issue.safe_attribute? 'custom_field_values') && q.custom_field.present? %>
           <% id = q.identifier.present? ? q.identifier : custom_field_tag_id(:issue, q.custom_field) %>
           <% values[q.custom_field_id].custom_field.is_required |= q.required %>
