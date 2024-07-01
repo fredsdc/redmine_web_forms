@@ -185,6 +185,9 @@ class Webform < ActiveRecord::Base
       when "fixed_version_id"; -5
       when "priority_id"; -6
       when "parent_id"; -7
+      when "start_date"; -8
+      when "due_date"; -9
+      when "done_ratio"; -10
       else;    nil
       end
     else
@@ -202,6 +205,9 @@ class Webform < ActiveRecord::Base
       when -5; "fixed_version_id"
       when -6; "priority_id"
       when -7; "parent_id"
+      when -8; "start_date"
+      when -9; "due_date"
+      when -10; "done_ratio"
       else;    nil
       end
     else

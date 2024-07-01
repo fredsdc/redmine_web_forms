@@ -222,7 +222,10 @@ class WebformsController < ApplicationController
       [ l(:field_subject), -4],
       [ l(:field_fixed_version), -5],
       [ l(:field_priority), -6],
-      [ l(:field_parent_issue), -7]
+      [ l(:field_parent_issue), -7],
+      [ l(:field_start_date), -8],
+      [ l(:field_due_date), -9],
+      [ l(:field_done_ratio), -10]
     ]
   end
 
@@ -255,6 +258,9 @@ class WebformsController < ApplicationController
       @issue.fixed_version_id = cf.value                               if cf.custom_field_id == -5
       @issue.priority_id = cf.value                                    if cf.custom_field_id == -6
       @issue.parent_id = cf.value                                      if cf.custom_field_id == -7
+      @issue.start_date = cf.value                                     if cf.custom_field_id == -8
+      @issue.due_date = cf.value                                       if cf.custom_field_id == -9
+      @issue.done_ratio = cf.value                                     if cf.custom_field_id == -10
       @issue.custom_field_values = {"#{cf.custom_field_id}": cf.value} if cf.custom_field.present?
     end
 
@@ -270,6 +276,9 @@ class WebformsController < ApplicationController
       when -5; attrs["fixed_version_id"]=param_attrs["fixed_version_id"]
       when -6; attrs["priority_id"]=param_attrs["priority_id"]
       when -7; attrs["parent_id"]=param_attrs["parent_id"]
+      when -8; attrs["start_date"]=param_attrs["start_date"]
+      when -9; attrs["due_date"]=param_attrs["due_date"]
+      when -10; attrs["done_ratio"]=param_attrs["done_ratio"]
       else;    attrs["custom_field_values"][x.to_s]=param_attrs["custom_field_values"][x.to_s]
       end
     end
@@ -317,6 +326,9 @@ class WebformsController < ApplicationController
         when -5; webform_question_error(q) unless param_attrs_w["fixed_version_id"].present?
         when -6; webform_question_error(q) unless param_attrs_w["priority_id"].present?
         when -7; webform_question_error(q) unless param_attrs_w["parent_id"].present?
+        when -8; webform_question_error(q) unless param_attrs_w["start_date"].present?
+        when -9; webform_question_error(q) unless param_attrs_w["due_date"].present?
+        when -10; webform_question_error(q) unless param_attrs_w["done_ratio"].present?
         else;    webform_question_error(q) unless param_attrs_w["custom_field_values"].present? && param_attrs_w["custom_field_values"][q.custom_field_id.to_s].present?
         end
       else
