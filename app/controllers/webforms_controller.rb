@@ -319,23 +319,23 @@ class WebformsController < ApplicationController
       param_attrs_q = (params[:webform_questions] || {}).deep_dup
       if q.custom_field_id.present?
         case q.custom_field_id
-        when -1; webform_question_error(q) unless param_attrs_w["assigned_to_id"].present?
-        when -2; webform_question_error(q) unless param_attrs_w["category_id"].present?
-        when -3; webform_question_error(q) unless param_attrs_w["description"].present?
-        when -4; webform_question_error(q) unless param_attrs_w["subject"].present?
-        when -5; webform_question_error(q) unless param_attrs_w["fixed_version_id"].present?
-        when -6; webform_question_error(q) unless param_attrs_w["priority_id"].present?
-        when -7; webform_question_error(q) unless param_attrs_w["parent_id"].present?
-        when -8; webform_question_error(q) unless param_attrs_w["start_date"].present?
-        when -9; webform_question_error(q) unless param_attrs_w["due_date"].present?
-        when -10; webform_question_error(q) unless param_attrs_w["done_ratio"].present?
-        else;    webform_question_error(q) unless param_attrs_w["custom_field_values"].present? && param_attrs_w["custom_field_values"][q.custom_field_id.to_s].present?
+        when -1; webform_question_error(q.description.presence || l(:label_assigned_to_id)) unless param_attrs_w["assigned_to_id"].present?
+        when -2; webform_question_error(q.description.presence || l(:label_category_id)) unless param_attrs_w["category_id"].present?
+        when -3; webform_question_error(q.description.presence || l(:label_description)) unless param_attrs_w["description"].present?
+        when -4; webform_question_error(q.description.presence || l(:label_subject)) unless param_attrs_w["subject"].present?
+        when -5; webform_question_error(q.description.presence || l(:label_fixed_version_id)) unless param_attrs_w["fixed_version_id"].present?
+        when -6; webform_question_error(q.description.presence || l(:label_priority_id)) unless param_attrs_w["priority_id"].present?
+        when -7; webform_question_error(q.description.presence || l(:label_parent_id)) unless param_attrs_w["parent_id"].present?
+        when -8; webform_question_error(q.description.presence || l(:label_start_date)) unless param_attrs_w["start_date"].present?
+        when -9; webform_question_error(q.description.presence || l(:label_due_date)) unless param_attrs_w["due_date"].present?
+        when -10; webform_question_error(q.description.presence || l(:label_done_ratio)) unless param_attrs_w["done_ratio"].present?
+        else;    webform_question_error(q.description.presence || q.custom_field.name) unless param_attrs_w["custom_field_values"].present? && param_attrs_w["custom_field_values"][q.custom_field_id.to_s].present?
         end
       else
         if q.possible_values.any?
-          webform_question_error(q) unless q.possible_values.include?(param_attrs_q[q.id.to_s])
+          webform_question_error(q.description) unless q.possible_values.include?(param_attrs_q[q.id.to_s])
         else
-          webform_question_error(q) if param_attrs_q[q.id.to_s].empty?
+          webform_question_error(q.description) if param_attrs_q[q.id.to_s].empty?
         end
       end
     end
@@ -353,6 +353,6 @@ class WebformsController < ApplicationController
   end
 
   def webform_question_error(q)
-    @webform.errors.add :base, q.description + " " + ::I18n.t('activerecord.errors.messages.blank')
+    @webform.errors.add :base, ActionController::Base.helpers.strip_tags(textilize(q)) + " " + ::I18n.t('activerecord.errors.messages.blank')
   end
 end
