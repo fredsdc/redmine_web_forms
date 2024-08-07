@@ -54,59 +54,59 @@
     <div class="box" <%= q.hidden? ? 'style="display: none;"'.html_safe : '' %>>
       <% if q.custom_field.present? || [-1,-2,-3,-4,-5,-6,-7,-8,-9,-10].include?(q.custom_field_id) %>
         <% if q.custom_field_id == -1 && @issue.safe_attribute?('assigned_to_id') # assigned_to %>
-          <div class="wiki"><%= textilize(q.description + (@issue.required_attribute?('assigned_to_id') ||
-            q.required ? ' <span class="required">*</span>' : '')).html_safe %></div>
+          <div class="wiki"><%= textilizable q.description + (@issue.required_attribute?('assigned_to_id') ||
+            q.required ? ' <span class="required">*</span>' : '') %></div>
           <%= f.select :assigned_to_id, principals_options_for_select(@issue.assignable_users, @issue.assigned_to),
                        {:include_blank => true, :label => ''},
                        {:id => q.identifier, :onchange => q.onchange} %>
         <% elsif q.custom_field_id == -2 && @issue.safe_attribute?('category_id') # category %>
-          <div class="wiki"><%= textilize(q.description + (@issue.required_attribute?('category_id') ||
-            q.required ? ' <span class="required">*</span>' : '')).html_safe %></div>
+          <div class="wiki"><%= textilizable q.description + (@issue.required_attribute?('category_id') ||
+            q.required ? ' <span class="required">*</span>' : '') %></div>
           <%= f.select :category_id, (@issue.project.issue_categories.collect {|c| [c.name, c.id]}),
                        {:include_blank => true, :label => ''},
                        {:id => q.identifier, :onchange => q.onchange} %>
         <% elsif q.custom_field_id == -3 && @issue.safe_attribute?('description') # description %>
-          <div class="wiki"><%= textilize(q.description + (@issue.required_attribute?('description') ||
-            q.required ? ' <span class="required">*</span>' : '')).html_safe %></div>
+          <div class="wiki"><%= textilizable q.description + (@issue.required_attribute?('description') ||
+            q.required ? ' <span class="required">*</span>' : '') %></div>
           <% id = q.identifier.present? ? q.identifier : 'issue_description' %>
           <%= f.text_area :description, :cols => 60, :accesskey => accesskey(:edit), :class => 'wiki-edit',
                        :rows => [[10, @issue.description.to_s.length / 50].max, 20].min,
                        :label => '', :id => id, :onchange => q.onchange %>
           <%= wikitoolbar_for id, preview_issue_path(:project_id => @issue.project, :issue_id => @issue.id) %>
         <% elsif q.custom_field_id == -4 # subject %>
-          <div class="wiki"><%= textilize(q.description + (@issue.required_attribute?('subject') ||
-            q.required ? ' <span class="required">*</span>' : '')).html_safe %></div>
+          <div class="wiki"><%= textilizable q.description + (@issue.required_attribute?('subject') ||
+            q.required ? ' <span class="required">*</span>' : '') %></div>
           <%= f.text_field :subject, :size => 80, :maxlength => 255, :label => '', :id => q.identifier,
                            :onchange => q.onchange %>
         <% elsif q.custom_field_id == -5 && @issue.safe_attribute?('fixed_version_id') # fixed_version %>
-          <div class="wiki"><%= textilize(q.description + (@issue.required_attribute?('fixed_version_id') ||
-            q.required ? ' <span class="required">*</span>' : '')).html_safe %></div>
+          <div class="wiki"><%= textilizable q.description + (@issue.required_attribute?('fixed_version_id') ||
+            q.required ? ' <span class="required">*</span>' : '') %></div>
           <%= f.select :fixed_version_id, (@issue.project.versions.collect{|c| [c.name, c.id]}),
                        {:label => '', :include_blank => true},
                        {:id => q.identifier, :onchange => q.onchange} %>
         <% elsif q.custom_field_id == -6 && @issue.safe_attribute?('priority_id') # priority %>
-          <div class="wiki"><%= textilize(q.description + (@issue.required_attribute?('priority_id') ||
-            q.required ? ' <span class="required">*</span>' : '')).html_safe %></div>
+          <div class="wiki"><%= textilizable q.description + (@issue.required_attribute?('priority_id') ||
+            q.required ? ' <span class="required">*</span>' : '') %></div>
           <%= f.select :priority_id, (@priorities.collect{|c| [c.name, c.id]}),
                        {:label => ''}, {:id => q.identifier, :onchange => q.onchange} %>
         <% elsif q.custom_field_id == -7 # parent_id %>
-          <div class="wiki"><%= textilize(q.description + (@issue.required_attribute?('parent_id') ||
-            q.required ? ' <span class="required">*</span>' : '')).html_safe %></div>
+          <div class="wiki"><%= textilizable q.description + (@issue.required_attribute?('parent_id') ||
+            q.required ? ' <span class="required">*</span>' : '') %></div>
           <%= f.number_field :parent_id, :size => 80, :maxlength => 255, :label => '',
                            :id => q.identifier, :onchange => q.onchange %>
         <% elsif q.custom_field_id == -8 # start_date %>
-          <div class="wiki"><%= textilize(q.description + (@issue.required_attribute?('start_date') ||
-            q.required ? ' <span class="required">*</span>' : '')).html_safe %></div>
+          <div class="wiki"><%= textilizable q.description + (@issue.required_attribute?('start_date') ||
+            q.required ? ' <span class="required">*</span>' : '') %></div>
           <%= f.date_field :start_date, :size => 10, :label => '',
                            :id => q.identifier, :onchange => q.onchange %>
         <% elsif q.custom_field_id == -9 # due_date %>
-          <div class="wiki"><%= textilize(q.description + (@issue.required_attribute?('due_date') ||
-            q.required ? ' <span class="required">*</span>' : '')).html_safe %></div>
+          <div class="wiki"><%= textilizable q.description + (@issue.required_attribute?('due_date') ||
+            q.required ? ' <span class="required">*</span>' : '') %></div>
           <%= f.date_field :due_date, :size => 10, :label => '',
                            :id => q.identifier, :onchange => q.onchange %>
         <% elsif q.custom_field_id == -10 # done_ratio %>
-          <div class="wiki"><%= textilize(q.description + (@issue.required_attribute?('done_ratio') ||
-            q.required ? ' <span class="required">*</span>' : '')).html_safe %></div>
+          <div class="wiki"><%= textilizable q.description + (@issue.required_attribute?('done_ratio') ||
+            q.required ? ' <span class="required">*</span>' : '') %></div>
           <%= f.select :done_ratio, ((0..10).to_a.collect {|r| ["#{r*10} %", r*10] }),
                        {:label => '', :include_blank => true},
                        {:id => q.identifier, :onchange => q.onchange} %>
@@ -114,14 +114,14 @@
           <% id = q.identifier.present? ? q.identifier : custom_field_tag_id(:issue, q.custom_field) %>
           <% values[q.custom_field_id].custom_field.is_required |= q.required %>
           <% values[q.custom_field_id].custom_field.name = q.description if q.description.present? %>
-          <div class="wiki"><%= textilize(values[q.custom_field_id].custom_field.name +
-            (values[q.custom_field_id].custom_field.is_required ? ' <span class="required">*</span>' : '')).html_safe %></div>
+          <div class="wiki"><%= textilizable values[q.custom_field_id].custom_field.name +
+            (values[q.custom_field_id].custom_field.is_required ? ' <span class="required">*</span>' : '') %></div>
           <%= custom_field_tag(:issue, values[q.custom_field_id]).
             gsub(/ id="(.+?)"/, ' id="' + id + '" onchange="' + q.onchange + '"' ).html_safe %>
           <%= wikitoolbar_for id if q.custom_field.present? && q.custom_field.full_text_formatting? %>
         <% end %>
       <% elsif (q.custom_field_id.nil?) %>
-        <div class="wiki"><%= textilize(q.description + (q.required ? ' <span class="required">*</span>' : '')).html_safe %></div>
+        <div class="wiki"><%= textilizable q.description + (q.required ? ' <span class="required">*</span>' : '') %></div>
         <% if q.possible_values.present? %>
           <%= select_tag '',
                 options_for_select(q.possible_values.insert(0, q.required ? "--- #{l(:actionview_instancetag_blank_option)} ---" : ''), @webform_questions[q.id]),

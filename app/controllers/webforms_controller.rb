@@ -353,6 +353,6 @@ class WebformsController < ApplicationController
   end
 
   def webform_question_error(q)
-    @webform.errors.add :base, ActionController::Base.helpers.strip_tags(textilize(q)) + " " + ::I18n.t('activerecord.errors.messages.blank')
+    @webform.errors.add :base, ActionController::Base.helpers.strip_tags(Redmine::WikiFormatting.to_html('textile',q)) + " " + ::I18n.t('activerecord.errors.messages.blank')
   end
 end
