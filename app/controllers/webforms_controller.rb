@@ -256,7 +256,7 @@ class WebformsController < ApplicationController
       @issue.subject = cf.value                                        if cf.custom_field_id == -4
       @issue.fixed_version_id = cf.value                               if cf.custom_field_id == -5
       @issue.priority_id = cf.value                                    if cf.custom_field_id == -6
-      @issue.parent_id = cf.value                                      if cf.custom_field_id == -7
+      @issue.parent_issue_id = cf.value                                if cf.custom_field_id == -7
       @issue.start_date = cf.value                                     if cf.custom_field_id == -8
       @issue.due_date = cf.value                                       if cf.custom_field_id == -9
       @issue.done_ratio = cf.value                                     if cf.custom_field_id == -10
@@ -274,7 +274,7 @@ class WebformsController < ApplicationController
       when -4; attrs["subject"]=param_attrs["subject"]
       when -5; attrs["fixed_version_id"]=param_attrs["fixed_version_id"]
       when -6; attrs["priority_id"]=param_attrs["priority_id"]
-      when -7; attrs["parent_id"]=param_attrs["parent_id"]
+      when -7; attrs["parent_issue_id"]=param_attrs["parent_issue_id"]
       when -8; attrs["start_date"]=param_attrs["start_date"]
       when -9; attrs["due_date"]=param_attrs["due_date"]
       when -10; attrs["done_ratio"]=param_attrs["done_ratio"]
@@ -318,16 +318,16 @@ class WebformsController < ApplicationController
       param_attrs_q = (params[:webform_questions] || {}).deep_dup
       if q.custom_field_id.present?
         case q.custom_field_id
-        when -1; webform_question_error(q.description.presence || l(:label_assigned_to_id)) unless param_attrs_w["assigned_to_id"].present?
-        when -2; webform_question_error(q.description.presence || l(:label_category_id)) unless param_attrs_w["category_id"].present?
-        when -3; webform_question_error(q.description.presence || l(:label_description)) unless param_attrs_w["description"].present?
-        when -4; webform_question_error(q.description.presence || l(:label_subject)) unless param_attrs_w["subject"].present?
-        when -5; webform_question_error(q.description.presence || l(:label_fixed_version_id)) unless param_attrs_w["fixed_version_id"].present?
-        when -6; webform_question_error(q.description.presence || l(:label_priority_id)) unless param_attrs_w["priority_id"].present?
-        when -7; webform_question_error(q.description.presence || l(:label_parent_id)) unless param_attrs_w["parent_id"].present?
-        when -8; webform_question_error(q.description.presence || l(:label_start_date)) unless param_attrs_w["start_date"].present?
-        when -9; webform_question_error(q.description.presence || l(:label_due_date)) unless param_attrs_w["due_date"].present?
-        when -10; webform_question_error(q.description.presence || l(:label_done_ratio)) unless param_attrs_w["done_ratio"].present?
+        when -1; webform_question_error(q.description.presence || l(:field_assigned_to)) unless param_attrs_w["assigned_to_id"].present?
+        when -2; webform_question_error(q.description.presence || l(:field_category)) unless param_attrs_w["category_id"].present?
+        when -3; webform_question_error(q.description.presence || l(:field_description)) unless param_attrs_w["description"].present?
+        when -4; webform_question_error(q.description.presence || l(:field_subject)) unless param_attrs_w["subject"].present?
+        when -5; webform_question_error(q.description.presence || l(:field_fixed_version)) unless param_attrs_w["fixed_version_id"].present?
+        when -6; webform_question_error(q.description.presence || l(:field_priority)) unless param_attrs_w["priority_id"].present?
+        when -7; webform_question_error(q.description.presence || l(:field_parent_issue)) unless param_attrs_w["parent_issue_id"].present?
+        when -8; webform_question_error(q.description.presence || l(:field_start_date)) unless param_attrs_w["start_date"].present?
+        when -9; webform_question_error(q.description.presence || l(:field_due_date)) unless param_attrs_w["due_date"].present?
+        when -10; webform_question_error(q.description.presence || l(:field_done_ratio)) unless param_attrs_w["done_ratio"].present?
         else;    webform_question_error(q.description.presence || q.custom_field.name) unless param_attrs_w["custom_field_values"].present? && param_attrs_w["custom_field_values"][q.custom_field_id.to_s].present?
         end
       else
