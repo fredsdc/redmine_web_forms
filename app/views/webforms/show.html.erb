@@ -34,13 +34,13 @@
         <%= f.hidden_field :fixed_version_id, {:value => w.default_value, :id => w.identifier} %>
       <% elsif w.custom_field_id == -6 && @issue.safe_attribute?('priority_id') # priority %>
         <%= f.hidden_field :priority_id, {:value => w.default_value, :id => w.identifier} %>
-      <% elsif w.custom_field_id == -7 && @issue.safe_attribute?('parent_id') # parent_id %>
-        <%= f.hidden_field :parent_id, {:value => w.default_value, :id => w.identifier} %>
-      <% elsif w.custom_field_id == -8 && @issue.safe_attribute?('start_date') # parent_id %>
+      <% elsif w.custom_field_id == -7 && @issue.safe_attribute?('parent_issue_id') # parent_issue_id %>
+        <%= f.hidden_field :parent_issue_id, {:value => w.default_value, :id => w.identifier} %>
+      <% elsif w.custom_field_id == -8 && @issue.safe_attribute?('start_date') # start_date %>
         <%= f.hidden_field :start_date, {:value => w.default_value, :id => w.identifier} %>
-      <% elsif w.custom_field_id == -9 && @issue.safe_attribute?('due_date') # parent_id %>
+      <% elsif w.custom_field_id == -9 && @issue.safe_attribute?('due_date') # due_date %>
         <%= f.hidden_field :due_date, {:value => w.default_value, :id => w.identifier} %>
-      <% elsif w.custom_field_id == -10 && @issue.safe_attribute?('done_ratio') # parent_id %>
+      <% elsif w.custom_field_id == -10 && @issue.safe_attribute?('done_ratio') # done_ratio %>
         <%= f.hidden_field :done_ratio, {:value => w.default_value, :id => w.identifier} %>
       <% elsif @issue.safe_attribute? 'custom_field_values'  %>
         <%= hidden_field_tag "issue[custom_field_values][#{w.custom_field_id}]", w.default_value, { :id => w.identifier } if w.custom_field.present? %>
@@ -54,18 +54,21 @@
     <div class="box" <%= q.hidden? ? 'style="display: none;"'.html_safe : '' %>>
       <% if q.custom_field.present? || [-1,-2,-3,-4,-5,-6,-7,-8,-9,-10].include?(q.custom_field_id) %>
         <% if q.custom_field_id == -1 && @issue.safe_attribute?('assigned_to_id') # assigned_to %>
+          <% q.description = l(:field_assigned_to) unless q.description.present? %>
           <div class="wiki"><%= textilizable q.description + (@issue.required_attribute?('assigned_to_id') ||
             q.required ? ' *' : '') %></div>
           <%= f.select :assigned_to_id, principals_options_for_select(@issue.assignable_users, @issue.assigned_to),
                        {:include_blank => true, :label => ''},
                        {:id => q.identifier, :onchange => q.onchange} %>
         <% elsif q.custom_field_id == -2 && @issue.safe_attribute?('category_id') # category %>
+          <% q.description = l(:field_category) unless q.description.present? %>
           <div class="wiki"><%= textilizable q.description + (@issue.required_attribute?('category_id') ||
             q.required ? ' *' : '') %></div>
           <%= f.select :category_id, (@issue.project.issue_categories.collect {|c| [c.name, c.id]}),
                        {:include_blank => true, :label => ''},
                        {:id => q.identifier, :onchange => q.onchange} %>
         <% elsif q.custom_field_id == -3 && @issue.safe_attribute?('description') # description %>
+          <% q.description = l(:field_description) unless q.description.present? %>
           <div class="wiki"><%= textilizable q.description + (@issue.required_attribute?('description') ||
             q.required ? ' *' : '') %></div>
           <% id = q.identifier.present? ? q.identifier : 'issue_description' %>
@@ -74,37 +77,44 @@
                        :label => '', :id => id, :onchange => q.onchange %>
           <%= wikitoolbar_for id, preview_issue_path(:project_id => @issue.project, :issue_id => @issue.id) %>
         <% elsif q.custom_field_id == -4 # subject %>
+          <% q.description = l(:field_subject) unless q.description.present? %>
           <div class="wiki"><%= textilizable q.description + (@issue.required_attribute?('subject') ||
             q.required ? ' *' : '') %></div>
           <%= f.text_field :subject, :size => 80, :maxlength => 255, :label => '', :id => q.identifier,
                            :onchange => q.onchange %>
         <% elsif q.custom_field_id == -5 && @issue.safe_attribute?('fixed_version_id') # fixed_version %>
+          <% q.description = l(:field_fixed_version) unless q.description.present? %>
           <div class="wiki"><%= textilizable q.description + (@issue.required_attribute?('fixed_version_id') ||
             q.required ? ' *' : '') %></div>
           <%= f.select :fixed_version_id, (@issue.project.versions.collect{|c| [c.name, c.id]}),
                        {:label => '', :include_blank => true},
                        {:id => q.identifier, :onchange => q.onchange} %>
         <% elsif q.custom_field_id == -6 && @issue.safe_attribute?('priority_id') # priority %>
+          <% q.description = l(:field_priority) unless q.description.present? %>
           <div class="wiki"><%= textilizable q.description + (@issue.required_attribute?('priority_id') ||
             q.required ? ' *' : '') %></div>
           <%= f.select :priority_id, (@priorities.collect{|c| [c.name, c.id]}),
                        {:label => ''}, {:id => q.identifier, :onchange => q.onchange} %>
-        <% elsif q.custom_field_id == -7 # parent_id %>
-          <div class="wiki"><%= textilizable q.description + (@issue.required_attribute?('parent_id') ||
+        <% elsif q.custom_field_id == -7 # parent_issue_id %>
+          <% q.description = l(:field_parent_issue) unless q.description.present? %>
+          <div class="wiki"><%= textilizable q.description + (@issue.required_attribute?('parent_issue_id') ||
             q.required ? ' *' : '') %></div>
-          <%= f.number_field :parent_id, :size => 80, :maxlength => 255, :label => '',
+          <%= f.number_field :parent_issue_id, :size => 80, :maxlength => 255, :label => '',
                            :id => q.identifier, :onchange => q.onchange %>
         <% elsif q.custom_field_id == -8 # start_date %>
+          <% q.description = l(:field_start_date) unless q.description.present? %>
           <div class="wiki"><%= textilizable q.description + (@issue.required_attribute?('start_date') ||
             q.required ? ' *' : '') %></div>
           <%= f.date_field :start_date, :size => 10, :label => '',
                            :id => q.identifier, :onchange => q.onchange %>
         <% elsif q.custom_field_id == -9 # due_date %>
+          <% q.description = l(:field_due_date) unless q.description.present? %>
           <div class="wiki"><%= textilizable q.description + (@issue.required_attribute?('due_date') ||
             q.required ? ' *' : '') %></div>
           <%= f.date_field :due_date, :size => 10, :label => '',
                            :id => q.identifier, :onchange => q.onchange %>
         <% elsif q.custom_field_id == -10 # done_ratio %>
+          <% q.description = l(:field_done_ratio) unless q.description.present? %>
           <div class="wiki"><%= textilizable q.description + (@issue.required_attribute?('done_ratio') ||
             q.required ? ' *' : '') %></div>
           <%= f.select :done_ratio, ((0..10).to_a.collect {|r| ["#{r*10} %", r*10] }),

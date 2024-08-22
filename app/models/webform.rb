@@ -184,7 +184,7 @@ class Webform < ActiveRecord::Base
       when "subject"; -4
       when "fixed_version_id"; -5
       when "priority_id"; -6
-      when "parent_id"; -7
+      when "parent_issue_id"; -7
       when "start_date"; -8
       when "due_date"; -9
       when "done_ratio"; -10
@@ -204,7 +204,7 @@ class Webform < ActiveRecord::Base
       when -4; "subject"
       when -5; "fixed_version_id"
       when -6; "priority_id"
-      when -7; "parent_id"
+      when -7; "parent_issue_id"
       when -8; "start_date"
       when -9; "due_date"
       when -10; "done_ratio"
