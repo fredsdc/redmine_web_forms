@@ -16,7 +16,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 class WebformsController < ApplicationController
-  before_action :require_login
+  skip_before_action :check_if_login_required, :only => [:show, :new_issue]
   before_action :require_admin, :except => [:show, :new_issue]
 
   helper :custom_fields
@@ -92,10 +92,11 @@ class WebformsController < ApplicationController
 
   def show
     @webform = find_webform_by_identifier
+    @user = @webform.use_user_id.present? ? User.find(@webform.use_user_id) : require_login && User.current || return
     @priorities = IssuePriority.active
     @webform_questions = map_non_cf_answers
 
-    @issue = Issue.new(project: @webform.project, tracker:@webform.tracker, author:User.current)
+    @issue = Issue.new(project: @webform.project, tracker:@webform.tracker, author:@user)
     # Proceed if there are no invalid custom fields
     ifs = (
       @webform.webform_custom_field_values.map(&:custom_field_id) +
@@ -107,8 +108,8 @@ class WebformsController < ApplicationController
 
     errors = [l(:error_webform_in_maintenance)]
 
-    if User.current.admin?
-      errors += @webform.validate_webform_errors(user=User.current)
+    if @user.admin?
+      errors += @webform.validate_webform_errors
       errors += [l(:error_webform_invalid_fs, :ifs => ifs.join(', '))] if ifs.present?
     end
 
@@ -123,7 +124,7 @@ class WebformsController < ApplicationController
 
   def new_issue
     @webform = find_webform_by_identifier
-    @user = User.current
+    @user = @webform.use_user_id.present? ? User.find(@webform.use_user_id) : require_login && User.current || return
     @priorities = IssuePriority.active
     if @webform.validate_webform
       # Add user to group if not already

@@ -17,7 +17,10 @@ en:
   label_optional: optional
   label_webform_question: Question
   label_webform_question_new: New Question
-  label_add_user_to: Add user as a project member or to a group?
+  label_treat_user_permissions: "Manage user permissions:"
+  label_treat_user_permissions_user: "Use user"
+  label_treat_user_permissions_role: "Add to role"
+  label_treat_user_permissions_group: "Add to group"
   field_hidden: Hidden
   field_onchange: Onchange javascript
   field_onsubmit: Onsubmit javascript

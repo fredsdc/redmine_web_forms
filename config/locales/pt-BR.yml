@@ -15,7 +15,10 @@ pt-BR:
   label_optional: opcional
   label_webform_question: Questão
   label_webform_question_new: Nova questão
-  label_add_user_to: Adicionar usuário como membro do projeto ou a um grupo?
+  label_treat_user_permissions: "Tratamento de permissões do usuário:"
+  label_treat_user_permissions_user: "Usar usuário"
+  label_treat_user_permissions_role: "Adicionar ao papel"
+  label_treat_user_permissions_group: "Adicionar ao grupo"
   field_hidden: Esconder
   field_onchange: Javascript do onchange
   field_onsubmit: Javascript do onsubmit
