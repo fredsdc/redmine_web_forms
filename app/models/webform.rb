@@ -50,12 +50,14 @@ class Webform < ActiveRecord::Base
     'webform_custom_field_values',
     'identifier',
     'allow_attachments',
+    'use_user_id',
     'ready',
     'submit',
     'functions'
   )
 
   def validate_webform(user=User.current)
+    user = User.find(self.use_user_id) if self.use_user_id.present?
     roles = get_user_roles(user)
 
     self.project.present? &&
@@ -71,6 +73,7 @@ class Webform < ActiveRecord::Base
   end
 
   def validate_webform_errors(user=User.current)
+    user = User.find(self.use_user_id) if self.use_user_id.present?
     roles = get_user_roles(user)
 
     errors = []
@@ -143,7 +146,7 @@ class Webform < ActiveRecord::Base
   end
 
   def find_unavailable_fs
-    roles = (Member.where(user_id: self.group_id, project_id: self.project_id).map{|m| m.roles.ids}.flatten | [self.role_id]).compact.presence
+    roles = (Member.where(user_id: self.group_id, project_id: self.project_id).map{|m| m.roles.ids}.flatten | [self.role_id] | (self.use_user_id.present? ? User.find(self.use_user_id).roles.ids : [])).compact.presence
     if roles.present?
       # Fields on webform
       fs = (

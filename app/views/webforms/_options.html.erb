@@ -4,4 +4,8 @@
 <p><%= f.select :tracker_id, options_for_select(@trackers, :selected => @webform.tracker_id), {:include_blank => true}, :onchange => "updateFields();" %></p>
 <p><%= f.select :issue_status_id, options_for_select(@statuses, :selected => @webform.issue_status_id), {:include_blank => true, :label => :label_issue_status} %></p>
 <p><%= f.check_box :allow_attachments %></p>
+<div style="margin: 10px 0"><%= l(:label_treat_user_permissions) %></div>
+<p><%= f.select :use_user_id, Issue.new(project: @webform.project, tracker: @webform.tracker).assignable_users.select{|u| u.type == "User"}.collect{|c| [c.name, c.id]}, {:include_blank => true, :label => :label_treat_user_permissions_user} %></p>
+<p><%= f.select :role_id, options_for_select(@roles, :selected => @webform.role_id), {:include_blank => l(:label_none), :label => :label_treat_user_permissions_role} %></p>
+<p><%= f.select :group_id, options_for_select(@groups, :selected => @webform.group_id), {:include_blank => l(:label_none), :label => :label_treat_user_permissions_group} %></p>
 <% end %>
