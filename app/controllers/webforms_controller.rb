@@ -20,6 +20,7 @@ class WebformsController < ApplicationController
   before_action :require_admin, :except => [:show, :new_issue]
 
   helper :custom_fields
+  helper :issues # Fix RedmineUp expecting new issues only from Issue Controller
 
   def index
     @webforms = Webform.all
