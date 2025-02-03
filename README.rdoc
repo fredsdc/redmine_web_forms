@@ -62,6 +62,10 @@ It creates a new entry in the admin menu to manage webforms.
     $('#test').val('').closest('.box').hide()
   };
 
+==Important workflow restriction:
+
+<b>Chosen role must be allowed to change chosen task from <em>new issue</em> to chosen initial state. Look in Admin > Workflows.</b>
+
 == Usage:
 
 1. Go to Admininstration > Webforms, click on New webform
